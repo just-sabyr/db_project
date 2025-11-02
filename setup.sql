@@ -15,6 +15,20 @@ CREATE TABLE IF NOT EXISTS genres (
 -- Main tables
 
 -- Ildi, Flavio implement your tables here
+DROP TABLE IF EXISTS albums;
+
+CREATE TABLE albums (
+  album_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  album_name VARCHAR(255) NOT NULL,
+  release_year INT NOT NULL,
+  artist_id INT UNSIGNED NOT NULL,
+  genre_id INT UNSIGNED NULL,
+  cover_url VARCHAR(500),
+  PRIMARY KEY (album_id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS AudioFeatures (          -- Added the AudioFeatures  table
     feature_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
