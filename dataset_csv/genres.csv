@@ -1,0 +1,118 @@
+parent_genre,genre,short_description,genre_id
+Hip-Hop,hip-hop,"Music with stylized rhythmic and rhyming speech (""rapping"") over a beat, originating in the US.",1
+"Jazz, Blues & Funk",blues,"Genre rooted in African-American music, characterized by a specific chord progression and expressive, often sorrowful, lyrics.",2
+"Jazz, Blues & Funk",funk,"Rhythmic, danceable music emphasizing bass, drums, and a strong groove, de-emphasizing melody.",3
+"Jazz, Blues & Funk",honky-tonk,"Subgenre of country music focused on drinking, cheating, and heartbreak; traditionally played in bars.",4
+"Jazz, Blues & Funk",jazz,"Improvised music with roots in ragtime and blues, known for its complex harmonies and rhythm.",5
+"Jazz, Blues & Funk",r-n-b,"Rhythm and Blues; a genre blending pop, soul, and hip-hop, often focused on love and relationships.",6
+"Jazz, Blues & Funk",soul,"Music combining gospel, R&B, and pop, known for emotional, passionate singing.",7
+Pop,cantopop,"Popular music sung in Cantonese, primarily from Hong Kong.",8
+Pop,disney,Music from or associated with Disney films and media.,9
+Pop,happy,"Upbeat, major-key music intended to evoke positive emotions.",10
+Pop,indie-pop,"Pop music produced outside of major labels, often with a focus on melody and less polished sound.",11
+Pop,j-pop,Japanese popular music.,12
+Pop,k-pop,"South Korean pop music, known for polished production, dance, and fashion.",13
+Pop,mandopop,"Popular music sung in Mandarin, primarily from China, Taiwan, and Singapore.",14
+Pop,pop-film,Popular music written for or featured in movies.,15
+Pop,pop,"Contemporary, mainstream popular music, typically short, simple, and catchy songs.",16
+Folk & Traditional,bluegrass,"American folk music with roots in Irish, Scottish, and English traditional music, characterized by acoustic string instruments and high-pitched vocals.",17
+Folk & Traditional,country,"American popular music blending folk, blues, and Western musical traditions, often with simple structures and themes of rural life.",18
+Folk & Traditional,folk,"Music passed down orally or by custom, often with simple, traditional instruments and storytelling lyrics.",19
+Folk & Traditional,guitar,"Music focused heavily on the use of the guitar, often instrumental or showcasing virtuosity.",20
+Classical,classical,Art music rooted in Western traditions from the 11th century to the present; often complex and orchestral.,21
+Classical,new-age,"Ambient, often instrumental music intended for relaxation and meditation.",22
+Classical,piano,"Music focused heavily on the piano, often instrumental or showcasing virtuosity.",23
+General & Vocal Focus,acoustic,"Music primarily using non-electric instruments; often focuses on raw, natural sound.",24
+General & Vocal Focus,alternative,"Music that deviates from mainstream rock or pop; emphasizes a distinct, often independent, sound.",25
+General & Vocal Focus,children,"Simple, melodic songs for young audiences, often educational or playful.",26
+General & Vocal Focus,comedy,"Music intended to be humorous, often featuring parodies or novelty songs.",27
+General & Vocal Focus,gospel,"Music with Christian lyrics, typically characterized by strong vocals and spiritual themes.",28
+General & Vocal Focus,opera,"A dramatic work set to music, where singers and musicians perform a theatrical piece.",29
+General & Vocal Focus,romance,"Music with lyrical themes of love, intimacy, or romantic feelings.",30
+General & Vocal Focus,show-tunes,"Songs originating from musical theatre productions (Broadway, West End, etc.).",31
+General & Vocal Focus,singer-songwriter,"Music where a single artist writes and performs their own, often personal, material.",32
+General & Vocal Focus,songwriter,(Similar to above) Music with a strong emphasis on lyrical and compositional craft.,33
+General & Vocal Focus,study,Ambient or instrumental music designed to aid focus and concentration.,34
+General & Vocal Focus,sleep,"Calming, often ambient or drone-based music designed for relaxation and rest.",35
+General & Vocal Focus,sad,Music with melancholic or downbeat emotional themes and minor key melodies.,36
+Electronic & Dance,ambient,Non-intrusive electronic music intended to induce calm and atmosphere rather than focus.,37
+Electronic & Dance,breakbeat,"Electronic music built around sampled, chopped, and looped drum breaks.",38
+Electronic & Dance,chicago-house,"Early electronic dance music from Chicago, characterized by 4/4 beats and soulful vocals or baselines.",39
+Electronic & Dance,chill,"Electronic music with a relaxed tempo and calm, atmospheric mood.",40
+Electronic & Dance,club,Broad term for energetic music designed to be played in nightclubs.,41
+Electronic & Dance,dance,"Music composed for dancing (e.g., disco, house, techno).",42
+Electronic & Dance,deep-house,"House subgenre with a jazz-funk or soulful sound, slower tempo, and focus on atmosphere.",43
+Electronic & Dance,detroit-techno,"Original form of techno, often futuristically themed, blending electronic and soulful elements.",44
+Electronic & Dance,disco,"Dance music from the 1970s, characterized by a persistent beat and soulful vocals.",45
+Electronic & Dance,drum-and-bass,Fast-paced electronic music (160–180 BPM) focused on a heavy bassline and complex drum patterns.,46
+Electronic & Dance,dub,Music focused on heavily-effected instrumental versions of reggae; often features reverb and delay.,47
+Electronic & Dance,dubstep,"Electronic music from the UK with syncopated rhythms and strong bass drops, often around 140 BPM.",48
+Electronic & Dance,edm,Electronic Dance Music; a broad term for dance-oriented electronic music.,49
+Electronic & Dance,electro,Electronic music blending funk and hip-hop influences with drum machines and synthesizers.,50
+Electronic & Dance,electronic,"Music produced primarily with electronic instruments (synthesizers, drum machines, etc.).",51
+Electronic & Dance,garage,"UK electronic dance music that evolved from US garage/house, known for syncopated rhythms.",52
+Electronic & Dance,hardstyle,"Electronic dance music known for its hard, aggressive kick drums and intense synth melodies.",53
+Electronic & Dance,house,"Electronic dance music (4/4 beat, 120-130 BPM) that originated in Chicago in the early 1980s.",54
+Electronic & Dance,idm,Intelligent Dance Music; experimental electronic music often intended for home listening rather than clubs.,55
+Electronic & Dance,minimal-techno,"Subgenre of techno characterized by repetitive, stripped-down rhythms and subtle changes.",56
+Electronic & Dance,party,"Energetic, upbeat, and often familiar music designed for social gatherings.",57
+Electronic & Dance,progressive-house,"House subgenre characterized by a gradual buildup, long-form composition, and atmospheric melodies.",58
+Electronic & Dance,synth-pop,"Pop music driven by synthesizers, popular in the 1980s.",59
+Electronic & Dance,techno,"Electronic dance music from Detroit, known for its repetitive, driving four-on-the-floor beat.",60
+Electronic & Dance,trance,"Electronic music with a tempo around 120-150 BPM, characterized by repeating melodic phrases and intense buildup/release.",61
+Electronic & Dance,trip-hop,"Electronic music combining hip-hop beats with ambient textures and a downtempo, moody feel.",62
+Rock Metal & Associated,alt-rock,Alternative Rock; a genre of rock music that emerged from the independent music scene.,63
+Rock Metal & Associated,black-metal,"Extreme subgenre of metal, known for high-pitched screaming and raw, fast sound.",64
+Rock Metal & Associated,death-metal,"Extreme subgenre of metal, known for fast tempos, deep growling vocals, and technical playing.",65
+Rock Metal & Associated,emo,"Rock genre characterized by emotional, often confessional, lyrics and dynamic shifts.",66
+Rock Metal & Associated,goth,"Rock subgenre with dark, often brooding music and lyrics, and a specific aesthetic.",67
+Rock Metal & Associated,grindcore,"Extreme subgenre mixing death metal and hardcore punk, noted for its intensity and short songs.",68
+Rock Metal & Associated,groove,"Rock or metal with a focus on strong, driving, often mid-tempo rhythms.",69
+Rock Metal & Associated,grunge,"Alternative rock subgenre from Seattle, blending punk and heavy metal, often with angst-ridden lyrics.",70
+Rock Metal & Associated,hard-rock,"Loud, aggressive form of rock, often with heavy drums, distorted guitars, and strong vocals.",71
+Rock Metal & Associated,hardcore,"Fast, intense, and often aggressive subgenre of punk rock.",72
+Rock Metal & Associated,heavy-metal,"Loud, aggressive rock with an emphasis on electric guitar, often fast tempos and high energy.",73
+Rock Metal & Associated,indie,Independent music; rock or pop produced outside of major commercial labels.,74
+Rock Metal & Associated,j-rock,Japanese rock music.,75
+Rock Metal & Associated,metal,"Aggressive, heavily distorted rock music (umbrella term for its many subgenres).",76
+Rock Metal & Associated,metalcore,A fusion genre combining extreme metal (like death metal) with hardcore punk elements.,77
+Rock Metal & Associated,power-pop,"Melodic rock with strong hooks and a clean, concise production style.",78
+Rock Metal & Associated,psych-rock,"Psychedelic Rock; music influenced by psychedelic culture, often with surreal elements and studio effects.",79
+Rock Metal & Associated,punk-rock,"Fast, raw, and often anti-establishment rock music, originating in the mid-1970s.",80
+Rock Metal & Associated,punk,(Similar to above) Music prioritizing energy and simplicity over technical proficiency.,81
+Rock Metal & Associated,rock-n-roll,"Pioneering genre from the 1950s, blending blues, boogie-woogie, and country.",82
+Rock Metal & Associated,rock,"Broad genre of popular music characterized by a strong beat, guitars, and often a verse-chorus structure.",83
+Rock Metal & Associated,rockabilly,"Early form of rock and roll, blending country music with rhythm and blues.",84
+Rock Metal & Associated,ska,"Precursor to rocksteady and reggae from Jamaica, known for its distinctive syncopated beat.",85
+Reggae & Caribbean,dancehall,"Jamaican music characterized by a digital, drum-machine-driven riddim and toasting (rapping).",86
+Reggae & Caribbean,reggae,"Jamaican music developed in the late 1960s, known for its off-beat rhythm and heavy bass.",87
+Reggae & Caribbean,reggaeton,"A fusion of Jamaican dancehall, Latin American music, and hip-hop, often in Spanish.",88
+Reggae & Caribbean,ska,"Precursor to rocksteady and reggae from Jamaica, known for its distinctive syncopated beat.",89
+World & Regional,afrobeat,"A blend of West African musical styles, jazz, and funk, often with political lyrics.",90
+World & Regional,anime,"Music from or associated with Japanese animation (openings, endings, soundtracks).",91
+World & Regional,brazil,"Umbrella term for various Brazilian music styles (e.g., Samba, Bossa Nova).",92
+World & Regional,british,"Music originating from or strongly associated with the UK (e.g., Britpop, UK rock).",93
+World & Regional,cantopop,"Popular music sung in Cantonese, originating primarily from Hong Kong.",94
+World & Regional,forro,"Brazilian dance music originating from the Northeast, often featuring accordion and rhythm.",95
+World & Regional,french,"Music with French roots, often chanson or pop/rock sung in French.",96
+World & Regional,german,"Music with German roots, including Schlager, German rock, or electronic styles.",97
+World & Regional,indian,"Diverse music from India, including Bollywood, classical, and folk styles.",98
+World & Regional,iranian,"Music from Iran, encompassing traditional classical and various modern pop styles.",99
+World & Regional,j-dance,"Japanese dance music, often electronic and fast-paced.",100
+World & Regional,j-idol,"Japanese pop music performed by idol groups (often young, heavily marketed singers).",101
+World & Regional,j-pop,"Japanese popular music, a diverse, mainstream genre.",102
+World & Regional,j-rock,Japanese rock music.,103
+World & Regional,k-pop,"South Korean pop music, known for polished production, dance, and fashion.",104
+World & Regional,latin,Music originating from Latin America and the Iberian Peninsula.,105
+World & Regional,latino,Broad term for music and musicians from a Latin American cultural background.,106
+World & Regional,malay,"Music from Malaysia, often pop or traditional styles.",107
+World & Regional,mandopop,"Popular music sung in Mandarin, primarily from China, Taiwan, and Singapore.",108
+World & Regional,mpb,"Música Popular Brasileira (Brazilian Popular Music), a post-Bossa Nova genre.",109
+World & Regional,salsa,"Cuban and Puerto Rican social dance music, fast and energetic.",110
+World & Regional,samba,"Lively Brazilian dance and music, often associated with Carnival.",111
+World & Regional,sertanejo,"Popular Brazilian country music, divided into various eras and styles.",112
+World & Regional,spanish,"Music from Spain, including flamenco and various regional folk/pop styles.",113
+World & Regional,swedish,"Music originating from Sweden, including pop, metal, and dance music.",114
+World & Regional,tango,"A dramatic, often melancholy, Argentine and Uruguayan dance music.",115
+World & Regional,turkish,"Music from Turkey, blending traditional, folk, pop, and rock elements.",116
+World & Regional,world-music,Catch-all term for traditional or non-Western popular music.,117
