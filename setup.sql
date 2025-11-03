@@ -15,7 +15,15 @@ CREATE TABLE IF NOT EXISTS genres (
 -- Main tables
 
 -- Ildi, Flavio implement your tables here
-DROP TABLE IF EXISTS albums;
+
+CREATE TABLE Artists (
+  artist_id INTEGER PRIMARY KEY,
+  artist_name VARCHAR(255) NOT NULL,
+  artist_popularity INTEGER,
+  country VARCHAR(100),
+  genre_id INTEGER NOT NULL,
+  FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+);
 
 CREATE TABLE albums (
   album_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
