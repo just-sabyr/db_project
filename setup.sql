@@ -62,3 +62,15 @@ CREATE TABLE IF NOT EXISTS AudioFeatures (          -- Added the AudioFeatures  
     UNIQUE (track_id)
 );
 
+CREATE TABLE IF NOT EXISTS Users (
+    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(20) NOT NULL,
+    email VARCHAR(100) NULL, -- Email validation must be done at the Entry-point or even at the flask level
+    phone_number VARCHAR(13), -- + and 12 numbers
+    dob DATE NULL,
+    genre_id NULL, -- CREATE A separate table to allow multiple genres
+    artist_id NULL, -- CREATE a separate table to allow multiple fav artsits
+
+    FOREIGN KEY (genre_id) REFERENCES Genres, -- Favourite genre
+    FOREIGN KEY (artist_id) REFERENCES Artists, -- Fav artist
+);
