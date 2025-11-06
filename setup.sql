@@ -13,9 +13,6 @@ CREATE TABLE IF NOT EXISTS genres (
 
 
 -- Main tables
-
--- Ildi, Flavio implement your tables here
-
 CREATE TABLE Artists (
   artist_id INTEGER PRIMARY KEY,
   artist_name VARCHAR(255) NOT NULL,
@@ -37,6 +34,21 @@ CREATE TABLE albums (
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+CREATE TABLE Tracks (
+    track_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    track_name VARCHAR(100) NOT NULL,
+    album_id INTEGER NOT NULL,
+    artist_id INTEGER NULL,
+    genre_id INTEGER NULL,
+    duration INTEGER NULL, -- in milliseconds
+    explicit BOOL NULL,
+    popularity INT NULL,
+    
+    PRIMARY KEY track_id,
+    FOREIGN KEY (album_id) REFERENCES Albums(album_id),
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id),
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+);
 
 CREATE TABLE IF NOT EXISTS AudioFeatures (          -- Added the AudioFeatures  table
     feature_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
