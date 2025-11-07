@@ -2,7 +2,6 @@
 CREATE DATABASE IF NOT EXISTS db_project;
 USE db_project;
 
-
 -- Extra tables
 CREATE TABLE IF NOT EXISTS genres (
     genre_id INT NOT NULL PRIMARY KEY,
@@ -13,7 +12,7 @@ CREATE TABLE IF NOT EXISTS genres (
 
 
 -- Main tables
-CREATE TABLE Artists (
+CREATE TABLE IF NOT EXISTS Artists (
   artist_id INTEGER PRIMARY KEY,
   artist_name VARCHAR(255) NOT NULL,
   artist_popularity INTEGER,
@@ -22,7 +21,7 @@ CREATE TABLE Artists (
   FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );
 
-CREATE TABLE albums (
+CREATE TABLE IF NOT EXISTS albums (
   album_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   album_name VARCHAR(255) NOT NULL,
   release_year INT NOT NULL,
@@ -34,7 +33,7 @@ CREATE TABLE albums (
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE Tracks (
+CREATE TABLE IF NOT EXISTS Tracks (
     track_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     track_name VARCHAR(100) NOT NULL,
     album_id INTEGER NOT NULL,
