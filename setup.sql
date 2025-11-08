@@ -58,7 +58,8 @@ CREATE TABLE IF NOT EXISTS AudioFeatures (          -- Added the AudioFeatures  
     tempo        DECIMAL(5,2),
     loudness     DECIMAL(4,1),
     acousticness DECIMAL(3,2),
-    UNIQUE (track_id)
+    UNIQUE (track_id),
+    FOREIGN KEY (track_id) REFERENCES Tracks(track_id)  -- Added foreign key constraint from tracks
 );
 
 CREATE TABLE IF NOT EXISTS Users (
