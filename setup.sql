@@ -23,17 +23,24 @@ CREATE TABLE IF NOT EXISTS Artists (
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS albums (
-  album_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  album_name VARCHAR(255) NOT NULL,
-  release_year INT NOT NULL,
-  artist_id INT UNSIGNED NOT NULL,
-  genre_id INT UNSIGNED NULL,
-  cover_url VARCHAR(500),
-  PRIMARY KEY (album_id)
+CREATE TABLE IF NOT EXISTS Albums (
+    album_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    album_name VARCHAR(255) NOT NULL,
+    release_year INT NOT NULL,
+    artist_id INT UNSIGNED NOT NULL,
+    genre_id INT UNSIGNED NULL,
+    cover_url VARCHAR(500),
+
+    PRIMARY KEY (album_id),
+
+    
+    UNIQUE (artist_id, album_name, release_year),   -- new adition: prevents duplicate album entries
+
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) -- new adition enforces valid artist reference
 ) ENGINE=InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS Tracks (
     track_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
