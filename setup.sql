@@ -3,11 +3,11 @@ CREATE DATABASE IF NOT EXISTS db_project;
 USE db_project;
 
 -- Extra tables
-CREATE TABLE IF NOT EXISTS genres (
-    genre_id INT NOT NULL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Genres (
+    genre_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     parent_genre VARCHAR(100),
     genre_name VARCHAR(100),
-    genre_description TEXT
+    genre_description VARCHAR(255)
 );
 
 
@@ -34,16 +34,14 @@ CREATE TABLE IF NOT EXISTS albums (
   COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS Tracks (
-    track_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    track_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     track_name VARCHAR(100) NOT NULL,
-    album_id INTEGER NOT NULL,
-    artist_id INTEGER NULL,
-    genre_id INTEGER NULL,
-    duration INTEGER NULL, -- in milliseconds
+    album_id INT UNSIGNED NOT NULL,
+    artist_id INT UNSIGNED NULL,
+    genre_id INT UNSIGNED NULL,
+    duration INT NULL,
     explicit BOOL NULL,
     popularity INT NULL,
-    
-    PRIMARY KEY track_id,
     FOREIGN KEY (album_id) REFERENCES Albums(album_id),
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id),
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
@@ -62,15 +60,15 @@ CREATE TABLE IF NOT EXISTS AudioFeatures (          -- Added the AudioFeatures  
     FOREIGN KEY (track_id) REFERENCES Tracks(track_id)  -- Added foreign key constraint from tracks
 );
 
-CREATE TABLE IF NOT EXISTS Users (
-    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(20) NOT NULL,
-    email VARCHAR(100) NULL, -- Email validation must be done at the Entry-point or even at the flask level
-    phone_number VARCHAR(13), -- + and 12 numbers
-    dob DATE NULL,
-    genre_id NULL, -- CREATE A separate table to allow multiple genres
-    artist_id NULL, -- CREATE a separate table to allow multiple fav artsits
 
-    FOREIGN KEY (genre_id) REFERENCES Genres, -- Favourite genre
-    FOREIGN KEY (artist_id) REFERENCES Artists, -- Fav artist
+CREATE TABLE IF NOT EXISTS Users (
+    user_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100),                                             -- Email validation must be done at the Entry-point or even at the flask level
+    phone_number VARCHAR(13),                                       -- + and 12 numbers
+    dob DATE,
+    genre_id INT UNSIGNED NULL,
+    artist_id INT UNSIGNED NULL,
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),             -- Favourite genre
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id)           -- Fav artist
 );
