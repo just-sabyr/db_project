@@ -13,12 +13,14 @@ CREATE TABLE IF NOT EXISTS Genres (
 
 -- Main tables
 CREATE TABLE IF NOT EXISTS Artists (
-  artist_id INTEGER PRIMARY KEY,
-  artist_name VARCHAR(255) NOT NULL,
-  artist_popularity INTEGER,
-  country VARCHAR(100),
-  genre_id INTEGER NOT NULL,
-  FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+    artist_id INTEGER PRIMARY KEY,
+    artist_name VARCHAR(255) NOT NULL,
+    artist_popularity INTEGER,
+    country VARCHAR(100),
+    genre_id INTEGER NOT NULL,
+   UNIQUE (artist_name, country),  -- prevent duplicate artist names from same country
+
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );
 
 CREATE TABLE IF NOT EXISTS albums (
