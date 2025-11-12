@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Artists (
     artist_popularity INTEGER,
     country VARCHAR(100),
     genre_id INTEGER NOT NULL,
-   UNIQUE (artist_name, country),  -- prevent duplicate artist names from same country
+    UNIQUE (artist_name, country),  -- prevent duplicate artist names from same country
 
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );
@@ -37,9 +37,7 @@ CREATE TABLE IF NOT EXISTS Albums (
     UNIQUE (artist_id, album_name, release_year),   -- new adition: prevents duplicate album entries
 
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) -- new adition enforces valid artist reference
-) ENGINE=InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
+) 
 
 
 CREATE TABLE IF NOT EXISTS Tracks (
