@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS Albums (
 
     
     UNIQUE (artist_id, album_name, release_year),   -- new adition: prevents duplicate album entries
-
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)   ,    --new addition to prevent invalid genre reference
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) -- new adition enforces valid artist reference
 ) 
 
