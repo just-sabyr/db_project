@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS db_project;
 USE db_project;
 
 -- Extra tables
-CREATE TABLE IF NOT EXISTS Genres (
+CREATE TABLE IF NOT EXISTS Genres (                                                         -- Sabyr
     genre_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     parent_genre VARCHAR(100),
     genre_name VARCHAR(100),
@@ -12,18 +12,18 @@ CREATE TABLE IF NOT EXISTS Genres (
 
 
 -- Main tables
-CREATE TABLE IF NOT EXISTS Artists (
-    artist_id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Artists (                                                        -- Flavio
+    artist_id UNSIGNED PRIMARY KEY,
     artist_name VARCHAR(255) NOT NULL,
     artist_popularity INTEGER,
     country VARCHAR(100),
     genre_id INTEGER NOT NULL,
-    UNIQUE (artist_name, country),  -- prevent duplicate artist names from same country
+    UNIQUE (artist_name, country),                                                          -- prevent duplicate artist names from same country
 
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS Albums (
+CREATE TABLE IF NOT EXISTS Albums (                                                         -- Ildi
     album_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     album_name VARCHAR(255) NOT NULL,
     release_year INT NOT NULL,
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS Albums (
     PRIMARY KEY (album_id),
 
     
-    UNIQUE (artist_id, album_name, release_year),   -- new adition: prevents duplicate album entries
-    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)   ,    --new addition to prevent invalid genre reference
-    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) -- new adition enforces valid artist reference
+    UNIQUE (artist_id, album_name, release_year),   
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),   
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) 
 ) 
 
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS Tracks (
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS AudioFeatures (          -- Added the AudioFeatures  table
+CREATE TABLE IF NOT EXISTS AudioFeatures (                                                  -- Frenklin
     feature_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     track_id INT NOT NULL,
     danceability DECIMAL(3,2),
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS AudioFeatures (          -- Added the AudioFeatures  
 );
 
 
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS Users (                                                            -- Sabyr
     user_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100),                                             -- Email validation must be done at the Entry-point or even at the flask level
