@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS db_project;
 USE db_project;
 
 -- Extra tables
-CREATE TABLE IF NOT EXISTS Genres (                                                         -- Sabyr
+CREATE TABLE IF NOT EXISTS Genres (                                 -- Sabyr
     genre_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     parent_genre VARCHAR(100),
     genre_name VARCHAR(100),
@@ -12,18 +12,18 @@ CREATE TABLE IF NOT EXISTS Genres (                                             
 
 
 -- Main tables
-CREATE TABLE IF NOT EXISTS Artists (                                                        -- Flavio
+CREATE TABLE IF NOT EXISTS Artists (                                -- Flavio
     artist_id UNSIGNED PRIMARY KEY,
     artist_name VARCHAR(255) NOT NULL,
     artist_popularity INTEGER,
     country VARCHAR(100),
     genre_id INTEGER NOT NULL,
-    UNIQUE (artist_name, country),                                                          -- prevent duplicate artist names from same country
 
+    UNIQUE (artist_name, country),                                  -- prevent duplicate artist names from same country
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS Albums (                                                         -- Ildi
+CREATE TABLE IF NOT EXISTS Albums (                                 -- Ildi
     album_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     album_name VARCHAR(255) NOT NULL,
     release_year INT NOT NULL,
@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS Albums (                                             
     cover_url VARCHAR(500),
 
     PRIMARY KEY (album_id),
-
     
     UNIQUE (artist_id, album_name, release_year),   
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),   
@@ -40,7 +39,7 @@ CREATE TABLE IF NOT EXISTS Albums (                                             
 ) 
 
 
-CREATE TABLE IF NOT EXISTS Tracks (
+CREATE TABLE IF NOT EXISTS Tracks (                                 -- Sabyr
     track_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     track_name VARCHAR(100) NOT NULL,
     album_id INT UNSIGNED NOT NULL,
@@ -49,12 +48,13 @@ CREATE TABLE IF NOT EXISTS Tracks (
     duration INT NULL,
     explicit BOOL NULL,
     popularity INT NULL,
+
     FOREIGN KEY (album_id) REFERENCES Albums(album_id),
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id),
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS AudioFeatures (                                                  -- Frenklin
+CREATE TABLE IF NOT EXISTS AudioFeatures (                          -- Frenklin
     feature_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     track_id INT NOT NULL,
     danceability DECIMAL(3,2),
@@ -64,20 +64,22 @@ CREATE TABLE IF NOT EXISTS AudioFeatures (                                      
     loudness     DECIMAL(4,1),
     acousticness DECIMAL(3,2),
     UNIQUE (track_id),
-    FOREIGN KEY (track_id) REFERENCES Tracks(track_id)  -- Added foreign key constraint from tracks
+    FOREIGN KEY (track_id) REFERENCES Tracks(track_id)              -- Added foreign key constraint from tracks
 );
 
 
-CREATE TABLE IF NOT EXISTS Users (                                                            -- Sabyr
+CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
     user_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
-    email VARCHAR(100),                                             -- Email validation must be done at the Entry-point or even at the flask level
-    phone_number VARCHAR(13),                                       -- + and 12 numbers
+    email VARCHAR(100),                                             
+    phone_number CHAR(13),                                          -- + and 12 numbers
     dob DATE,
     genre_id INT UNSIGNED NULL,
     artist_id INT UNSIGNED NULL,
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),             -- Favourite genre
-    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id)           -- Fav artist
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id),          -- Fav artist
+
+    CONSTRAINT chk_users_email CHECK (email IS NULL OR email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
 );
 
 
