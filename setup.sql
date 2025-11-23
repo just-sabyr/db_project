@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),             -- Favourite genre
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id),          -- Fav artist
 
-    CONSTRAINT chk_users_email CHECK (email IS NULL OR email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+    CONSTRAINT chk_users_email CHECK (email IS NULL OR email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$')
 );
 
 
