@@ -4,7 +4,7 @@ USE db_project;
 
 -- Extra tables
 CREATE TABLE IF NOT EXISTS Genres (                                 -- Sabyr
-    genre_id INT UNSIGNED NULL AUTO_INCREMENT PRIMARY KEY,
+    genre_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     parent_genre VARCHAR(100),
     genre_name VARCHAR(100),
     genre_description VARCHAR(255)
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Artists (                                -- Flavio
     artist_name VARCHAR(255) NOT NULL,
     artist_popularity INTEGER,
     country VARCHAR(100),
-    genre_id INTEGER NOT NULL,
+    genre_id INT UNSIGNED NULL,
 
     UNIQUE (artist_name, country),                                  -- prevent duplicate artist names from same country
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS Tracks (                                 -- Sabyr
 
 CREATE TABLE IF NOT EXISTS AudioFeatures (                          -- Frenklin
     feature_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    track_id INT NOT NULL,
+    track_id INT UNSIGNED NOT NULL,
     danceability DECIMAL(3,2),
     energy       DECIMAL(3,2),
     valence      DECIMAL(3,2),
