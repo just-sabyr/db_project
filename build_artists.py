@@ -64,6 +64,15 @@ def normalize_genre(g):
     return g or None
 
 
+def normalize_artist_name(name):
+    """
+    Normalize artist names to improve matching.
+    """
+    if not isinstance(name, str):
+        return None
+    return name.strip().lower()
+
+
 # ------------------- MAIN LOGIC -------------------
 
 
@@ -95,16 +104,20 @@ def main():
     )
 
     # 3) Clean basic columns
-    df["artist_name"] = df[artist_col].apply(first_artist)
+    df["artist_name_raw"] = df[artist_col].apply(first_artist)
+    df["artist_name_norm"] = df["artist_name_raw"].apply(normalize_artist_name)
     df["artist_popularity_raw"] = df[popularity_col]
     df["genre_raw"] = df[genre_col].astype(str)
 
     # Drop rows without an artist name
-    df = df.dropna(subset=["artist_name"])
+    df = df.dropna(subset=["artist_name_norm"])
 
     # 4) Group by artist: max popularity + most frequent genre
     grouped = []
-    for artist, g in df.groupby("artist_name"):
+    for artist_norm, g in df.groupby("artist_name_norm"):
+        # Get the most common original artist name
+        original_name = g["artist_name_raw"].mode()[0] if not g["artist_name_raw"].empty else artist_norm
+
         # Popularity: max of all tracks for that artist
         try:
             max_pop = g["artist_popularity_raw"].max()
@@ -116,7 +129,7 @@ def main():
         genre_counts = Counter(g["genre_raw"])
         main_genre = genre_counts.most_common(1)[0][0] if genre_counts else None
 
-        grouped.append((artist, max_pop, main_genre))
+        grouped.append((original_name, max_pop, main_genre))
 
     artists_df = pd.DataFrame(
         grouped,
