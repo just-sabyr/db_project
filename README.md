@@ -15,9 +15,9 @@ Open the MySQL Shell
 
 Run these sql commands
 ```mysql
-    CREATE DATABASE db_project;
     CREATE USER 'superuser'@'localhost' IDENTIFIED BY '123';
     GRANT ALL PRIVILEGES ON db_project.* TO 'superuser'@'localhost';
+    GRANT FILE ON *.* TO 'superuser'@'localhost';
     FLUSH PRIVILEGES;
     EXIT;
 ```
@@ -28,20 +28,17 @@ MySQL Database schema is in setup.sql, so just run
     mysql -u superuser -p < setup.sql
 ```
 
-## 4. Allow copying from a .csv file
+## 4. Copy to the safe folder
+from proj to secure
 ```bash
-    sudo tee /etc/mysql/conf.d/local-infile.cnf > /dev/null <<'EOF'
-    [mysqld]
-    local_infile=1
-
-    [client]
-    local_infile=1
-    EOF
-
-    # restart MySQL (pick the correct service name for the system)
-    sudo systemctl restart mysql
+sudo cp -r /home/sabyr/Documents/database_systems/project/ /var/lib/mysql-files/dataset_csv 
 ```
 
+from secure to proj
+```bash
+    sudo cp -r /home/sabyr/Documents/database_systems/project/ /var/lib/mysql-files/dataset_csv 
+
+```
 
 ## 5. Import CSVs directly
 
