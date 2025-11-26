@@ -12,8 +12,8 @@ def create_app():
 
     # basic database settings (taken from .env or the default values)
     app.config["DB_HOST"] = os.getenv("DB_HOST", "localhost")
-    app.config["DB_USER"] = os.getenv("DB_USER", "superuser")
-    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "123")
+    app.config["DB_USER"] = os.getenv("DB_USER", "root")
+    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "270603")
     app.config["DB_NAME"] = os.getenv("DB_NAME", "db_project")
 
     # helper function to open a connection to MySQL
@@ -40,6 +40,11 @@ def create_app():
         <ul>
             <li><a href='/ping'>/ping</a></li>
             <li><a href='/genres'>/genres</a></li>
+            <li><a href='/artists'>/artists</a></li>
+            <li><a href='/albums'>/albums</a></li>
+            <li><a href='/tracks'>/tracks</a></li>
+            <li><a href='/audiofeatures'>/audiofeatures</a></li>
+            <li><a href='/users'>/users</a></li>
         </ul>
         """
 
@@ -66,8 +71,95 @@ def create_app():
         conn.close()
 
         return jsonify(rows)
+    
+    # Artists API Route 
+    @app.route("/artists")
+    def get_artists():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Cannot connect to database"}), 500
+
+        cursor = conn.cursor(dictionary=True)
+        # selecting a few columns just to keep output readable, its just for testing
+        cursor.execute("SELECT artist_id, artist_name, country, genre_id FROM Artists LIMIT 20;")
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+
+
+    # Albums API Route 
+    @app.route("/albums")
+    def get_albums():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Cannot connect to database"}), 500
+
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT album_id, album_name, release_year, artist_id FROM Albums LIMIT 20;")
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+
+
+    # Tracks API Route 
+    @app.route("/tracks")
+    def get_tracks():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Cannot connect to database"}), 500
+
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT track_id, track_name, album_id, artist_id, genre_id FROM Tracks LIMIT 20;")
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+
+
+    # Audio Features API Route 
+    @app.route("/audiofeatures")
+    def get_audio_features():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Cannot connect to database"}), 500
+
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT feature_id, track_id, danceability, energy, valence, tempo, loudness
+            FROM AudioFeatures LIMIT 20;
+        """)
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+
+
+    # Users API Route
+    @app.route("/users")
+    def get_users():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Cannot connect to database"}), 500
+
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT user_id, username, email, phone_number, dob, genre_id, artist_id
+            FROM Users LIMIT 20;
+        """)
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
 
     return app
+
 
 
 if __name__ == "__main__":
