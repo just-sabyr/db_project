@@ -11,10 +11,10 @@ def create_app():
     app = Flask(__name__)
 
     # basic database settings (taken from .env or the default values)
-    app.config["DB_HOST"] = os.getenv("DB_HOST", "localhost")
-    app.config["DB_USER"] = os.getenv("DB_USER", "root")
-    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "270603")
-    app.config["DB_NAME"] = os.getenv("DB_NAME", "db_project")
+    app.config["DB_HOST"] = os.getenv("DB_HOST", "localhost") # set this in .env
+    app.config["DB_USER"] = os.getenv("DB_USER", "YOUR USERNAME") # set this in .env
+    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "YOUR PASSWORD") # set this in env
+    app.config["DB_NAME"] = os.getenv("DB_NAME", "db_project") # set this in env 
 
     # helper function to open a connection to MySQL
     def get_db_connection():
