@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Artists (                                -- Flavio
 CREATE TABLE IF NOT EXISTS Albums (                                 -- Ildi
     album_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     album_name VARCHAR(255) NOT NULL,
-    release_year INT NOT NULL,
+    release_year INT NULL,
     artist_id INT UNSIGNED NOT NULL,
     genre_id INT UNSIGNED NULL,
     cover_url VARCHAR(500),
@@ -103,8 +103,8 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (parent_genre, genre_name, genre_description, genre_id);
 
-LOAD DATA INFILE '/var/lib/mysql-files/dataset_csv/artists.csv'
-INTO TABLE Artists
+LOAD DATA LOCAL INFILE 'dataset_csv/artists.csv'
+IGNORE INTO TABLE Artists
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
@@ -112,16 +112,16 @@ IGNORE 1 ROWS
 (artist_id, artist_name, artist_popularity, country, @genre_id)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA INFILE '/var/lib/mysql-files/dataset_csv/albums.csv'
+LOAD DATA LOCAL INFILE 'dataset_csv/albums.csv'
 INTO TABLE Albums
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(album_id, album_name, release_year, artist_id, @genre_id, cover_url)
+(album_id,artist_id,genre_id,album_name,release_year,cover_url)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA INFILE '/var/lib/mysql-files/dataset_csv/tracks.csv'
+LOAD DATA LOCAL INFILE 'dataset_csv/tracks.csv'
 INTO TABLE Tracks
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -130,7 +130,7 @@ IGNORE 1 ROWS
 (track_id, track_name, album_id, artist_id, @genre_id, duration, explicit, popularity)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA INFILE '/var/lib/mysql-files/dataset_csv/audio_features.csv'
+LOAD DATA LOCAL INFILE 'dataset_csv/audio_features.csv'
 INTO TABLE AudioFeatures
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
