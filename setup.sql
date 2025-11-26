@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
 
 -- Load data from CSV files
 
-LOAD DATA LOCAL INFILE 'dataset_csv/genres.csv'
+LOAD DATA LOCAL INFILE 'your/path/here/'
 INTO TABLE Genres
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -103,7 +103,7 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (parent_genre, genre_name, genre_description, genre_id);
 
-LOAD DATA LOCAL INFILE 'dataset_csv/artists.csv'
+LOAD DATA LOCAL INFILE 'your/path/here/'
 IGNORE INTO TABLE Artists
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -112,7 +112,7 @@ IGNORE 1 ROWS
 (artist_id, artist_name, artist_popularity, country, @genre_id)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA LOCAL INFILE 'dataset_csv/albums.csv'
+LOAD DATA LOCAL INFILE 'your/path/here/'
 INTO TABLE Albums
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -121,7 +121,7 @@ IGNORE 1 ROWS
 (album_id,artist_id,genre_id,album_name,release_year,cover_url)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA LOCAL INFILE 'dataset_csv/tracks.csv'
+LOAD DATA LOCAL INFILE 'your/path/here/'
 INTO TABLE Tracks
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -130,12 +130,36 @@ IGNORE 1 ROWS
 (track_id, track_name, album_id, artist_id, @genre_id, duration, explicit, popularity)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA LOCAL INFILE 'dataset_csv/audio_features.csv'
+LOAD DATA LOCAL INFILE 'your/path/here/'
 INTO TABLE AudioFeatures
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;    
+IGNORE 1 ROWS
+(track_id, danceability , energy , valence, tempo , loudness , acousticness);
+
+INSERT INTO Users (username, email, phone_number, dob, genre_id, artist_id) VALUES
+('frenklin23', 'frenklin23@gmail.com', '+90682345678', '2000-05-12', 1, 62),
+('ledi_music', 'ledi.music@yahoo.com', '+90694567890', '1999-11-03', 3, 5),
+('arjon_beat', 'arjonbeat@gmail.com', '+90671234567', '2001-07-21', 2, 1),
+('sofia98', 'sofia98@hotmail.com', '+905312345678', '1998-02-18', 4, 7),
+('amira_sound', 'amira.sound@outlook.com', '+90672220011', '2002-09-30', 6, NULL),
+('noah.dev', 'noah.dev@gmail.com', '+491712345678', '1997-03-05', 1, 3),
+('melisa2000', 'melisa2000@gmail.com', '+35688899900', '2000-12-14', 5, 4),
+('altin_rh', 'altin.rh@yahoo.com', '+35691234888', '1995-01-09', NULL, NULL),
+('julia_tunes', 'julia.tunes@gmail.com', '+55696666222', '2003-04-27', 2, 9),
+('genti_official', 'genti.official@gmail.com', '+55682998877', '1996-10-10', 8, 12),
+('mario_s', 'mario.s@gmail.com', '+393512345678', '1994-06-01', 4, NULL),
+('eva_star', 'eva.star@hotmail.com', '+35692340000', '2001-08-23', 7, 13),
+('lina_k', 'lina.k@yahoo.com', '+35675556677', '2002-03-14', 1, 5),
+('andrea_vibe', 'andrea.vibe@gmail.com', '+35682112233', '1998-12-31', 9, 6),
+('kevin_m', 'kevin.m@gmail.com', '+1 2025550199', '1997-04-17', 2, 10),
+('elira_x', 'elira.x@gmail.com', '+35683330055', '2000-11-20', 3, NULL),
+('ronaldo_plays', 'ronaldo.plays@gmail.com', '+35690099887', '1999-01-01', NULL, 4),
+('diana_live', 'diana.live@gmail.com', '+35694443210', '2003-09-15', 6, 8),
+('markosound', 'markosound@outlook.com', '+306944442211', '2002-02-02', 10, NULL),
+('sara_b', 'sara.b@gmail.com', '+90688812121', '1998-05-05', 5, 15);
+
     
     
     
