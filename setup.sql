@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
 );
 
 
---- Genres data insertion from genres.csv
+-- Genres data insertion from genres.csv
 INSERT INTO Genres (genre_id, parent_genre, genre_name, genre_description) VALUES
     (1, 'Hip-Hop', 'hip-hop', 'Music with stylized rhythmic and rhyming speech (''rapping'') over a beat, originating in the US.'),
     (2, 'Jazz, Blues & Funk', 'blues', 'Genre rooted in African-American music, characterized by a specific chord progression and expressive, often sorrowful, lyrics.'),
