@@ -91,7 +91,7 @@ def create_app():
 
         cursor.close()
         conn.close()
-        return jsonify(rows)
+        return render_template ("albums.html", albums = rows)
 
 
     # Tracks API Route 
