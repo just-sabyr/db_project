@@ -145,8 +145,8 @@ def create_app():
 
         cursor.close()
         conn.close()
-        
-        return jsonify(rows)
+        return render_template("users.html", users=rows)
+        #return jsonify(rows)
 
     return app
 
