@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
@@ -11,10 +11,10 @@ def create_app():
     app = Flask(__name__)
 
     # basic database settings (taken from .env or the default values)
-    app.config["DB_HOST"] = os.getenv("DB_HOST", "localhost") # set this in .env
-    app.config["DB_USER"] = os.getenv("DB_USER", "YOUR USERNAME") # set this in .env
-    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "YOUR PASSWORD") # set this in env
-    app.config["DB_NAME"] = os.getenv("DB_NAME", "db_project") # set this in env 
+    app.config["DB_HOST"] = os.getenv("DB_HOST", "localhost")
+    app.config["DB_USER"] = os.getenv("DB_USER", "root")
+    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "270603")
+    app.config["DB_NAME"] = os.getenv("DB_NAME", "db_project")
 
     # helper function to open a connection to MySQL
     def get_db_connection():
@@ -34,19 +34,8 @@ def create_app():
     # default route; something to show that the API works
     @app.route("/")
     def index():
-        return """
-        <h1>Spotify Database Flask API</h1>
-        <p>Server is running. Try these endpoints:</p>
-        <ul>
-            <li><a href='/ping'>/ping</a></li>
-            <li><a href='/genres'>/genres</a></li>
-            <li><a href='/artists'>/artists</a></li>
-            <li><a href='/albums'>/albums</a></li>
-            <li><a href='/tracks'>/tracks</a></li>
-            <li><a href='/audiofeatures'>/audiofeatures</a></li>
-            <li><a href='/users'>/users</a></li>
-        </ul>
-        """
+         return render_template("index.html")
+      
 
     # simple test route
     @app.route("/ping")
@@ -156,6 +145,7 @@ def create_app():
 
         cursor.close()
         conn.close()
+        
         return jsonify(rows)
 
     return app
