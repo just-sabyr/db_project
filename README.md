@@ -73,5 +73,57 @@ USE db_project;
 SELECT COUNT(*) FROM genres;
 SELECT * FROM genres ORDER BY genre_id LIMIT 20;
 ```
+# 6. Running the flask Backend
 
+ ## Create virtual enviroment
+
+```bash
+   python -m venv venv
+```
+   ## Activate in Windows 
+
+ ```bash
+    venv\Scripts\activate
+ ```
+    
+   ## Activate in Linux or Mac 
+
+```bash
+   source venv/bin/activate
+```
+   ## Install Python dependencies
+
+   ```bash
+      pip install flask mysql-connector-python python-dotenv
+   ```
+   ## Create .env file (Each team member can put their own MySQL username and password.)
+  ```bash
+            DB_HOST=localhost
+            DB_USER=YOUR USERNAME
+            DB_PASSWORD=YOUR PASSWORD
+            DB_NAME=db_project
+
+            FLASK_APP=app.py
+            FLASK_ENV=development
+  ```
+
+   ## Run the flask server 
+
+   ```bash
+            cd flask_setup
+   ```
+
+   ```bash
+            cd flask run
+   ```     
+   ##  If Flask doesn't detect the app, set manually:
+   ```bash
+                    $env:FLASK_APP="app.py"     # PowerShell
+                    export FLASK_APP=app.py     # Mac/Linux
+  ```
+   ## The server will start at 
+
+  ```bash
+            http://127.0.0.1:5000/ 
+ ```
 ---
