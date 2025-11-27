@@ -140,9 +140,9 @@ IGNORE 1 ROWS
 
 INSERT INTO Users (username, email, phone_number, dob, genre_id, artist_id) VALUES
 ('frenklin23', 'frenklin23@gmail.com', '+90682345678', '2000-05-12', 1, 62),
-('ledi_music', 'ledi.music@yahoo.com', '+90694567890', '1999-11-03', 3, 5),
-('arjon_beat', 'arjonbeat@gmail.com', '+90671234567', '2001-07-21', 2, 1),
-('sofia98', 'sofia98@hotmail.com', '+905312345678', '1998-02-18', 4, 7),
+('sabyrPM', 'projectmanager@yahoo.com', '+90694567890', '1999-11-03', 3, 5),
+('Favi', 'favi@gmail.com', '+90671234567', '2001-07-21', 2, 1),
+('ildo', 'ildoh@hotmail.com', '+905312345678', '1998-02-18', 4, 7),
 ('amira_sound', 'amira.sound@outlook.com', '+90672220011', '2002-09-30', 6, NULL),
 ('noah.dev', 'noah.dev@gmail.com', '+491712345678', '1997-03-05', 1, 3),
 ('melisa2000', 'melisa2000@gmail.com', '+35688899900', '2000-12-14', 5, 4),

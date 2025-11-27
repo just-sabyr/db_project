@@ -12,8 +12,8 @@ def create_app():
 
     # basic database settings (taken from .env or the default values)
     app.config["DB_HOST"] = os.getenv("DB_HOST", "localhost")
-    app.config["DB_USER"] = os.getenv("DB_USER", "root")
-    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "270603")
+    app.config["DB_USER"] = os.getenv("DB_USER", "KATCHAW")
+    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "KATCHAW")
     app.config["DB_NAME"] = os.getenv("DB_NAME", "db_project")
 
     # helper function to open a connection to MySQL
@@ -53,13 +53,13 @@ def create_app():
         cursor = conn.cursor(dictionary=True)
 
         # just selecting a few rows to test the query
-        cursor.execute("SELECT genre_id, parent_genre, genre_name FROM Genres LIMIT 10;")
+        cursor.execute("SELECT genre_id, parent_genre, genre_name, genre_description FROM Genres;")
         rows = cursor.fetchall()
 
         cursor.close()
         conn.close()
 
-        return jsonify(rows)
+        return render_template("genres.html", genres=rows)
     
     # Artists API Route 
     @app.route("/artists")
@@ -70,7 +70,7 @@ def create_app():
 
         cursor = conn.cursor(dictionary=True)
         # selecting a few columns just to keep output readable, its just for testing
-        cursor.execute("SELECT artist_id, artist_name, country, genre_id FROM Artists LIMIT 20;")
+        cursor.execute("SELECT artist_id, artist_name, country, genre_id, artist_popularity FROM Artists LIMIT 20;")
         rows = cursor.fetchall()
 
         cursor.close()
@@ -86,7 +86,7 @@ def create_app():
             return jsonify({"error": "Cannot connect to database"}), 500
 
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT album_id, album_name, release_year, artist_id FROM Albums LIMIT 20;")
+        cursor.execute("SELECT album_id, album_name, release_year, artist_id, genre_id, cover_url FROM Albums LIMIT 20;")
         rows = cursor.fetchall()
 
         cursor.close()
@@ -102,7 +102,7 @@ def create_app():
             return jsonify({"error": "Cannot connect to database"}), 500
 
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT track_id, track_name, album_id, artist_id, genre_id FROM Tracks LIMIT 20;")
+        cursor.execute("SELECT track_id, track_name, album_id, artist_id, genre_id, duration, explicit,popularity FROM Tracks LIMIT 20;")
         rows = cursor.fetchall()
 
         cursor.close()
@@ -119,7 +119,7 @@ def create_app():
 
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT feature_id, track_id, danceability, energy, valence, tempo, loudness
+            SELECT feature_id, track_id, danceability, energy, valence, tempo, loudness, acousticness
             FROM AudioFeatures LIMIT 20;
         """)
         rows = cursor.fetchall()
