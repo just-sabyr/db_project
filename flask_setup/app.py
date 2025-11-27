@@ -107,7 +107,7 @@ def create_app():
 
         cursor.close()
         conn.close()
-        return jsonify(rows)
+        return render_template("tracks.html", tracks=rows)
 
 
     # Audio Features API Route 
@@ -126,7 +126,7 @@ def create_app():
 
         cursor.close()
         conn.close()
-        return jsonify(rows)
+        return render_template("audiofeatures.html", features=rows)
 
 
     # Users API Route

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audio Features – Spotify DB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+</head>
+<body>
+    <a href="/" class="back-link">← Back to Home</a>
+
+    <h1>Audio features</h1>
+    <p class="subtitle">Technical audio characteristics for each track.</p>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Track ID</th>
+                    <th>Danceability</th>
+                    <th>Energy</th>
+                    <th>Valence</th>
+                    <th>Tempo</th>
+                    <th>Loudness</th>
+                    <th>Acousticness</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in features %}
+                <tr>
+                    <td>{{ f.feature_id }}</td>
+                    <td>{{ f.track_id }}</td>
+                    <td>{{ f.danceability }}</td>
+                    <td>{{ f.energy }}</td>
+                    <td>{{ f.valence }}</td>
+                    <td>{{ f.tempo }}</td>
+                    <td>{{ f.loudness }}</td>
+                    <td>{{ f.acousticness }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
