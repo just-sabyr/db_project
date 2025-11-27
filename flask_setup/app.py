@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request, redirect, url_for
 import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
@@ -30,11 +30,72 @@ def create_app():
             # just print the error so I can see what went wrong
             print("MySQL error:", e)
             return None
+        
+    def execute_safe_query(query, params=None):
+     try:
+        conn = get_db_connection()
+        if conn is None:
+            return False, "Database connection failed"
+
+        cursor = conn.cursor()
+        cursor.execute(query, params or ())
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return True, None
+
+     except mysql.connector.Error as e:
+        return False, f"MySQL Error: {e}"
+
+    def get_genres_and_artists():           # helper: load genres and artists for dropdowns in the forms
+        conn = get_db_connection()
+        if conn is None:
+            return [], []
+
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT genre_id, genre_name FROM Genres ORDER BY genre_name;")
+        genres = cursor.fetchall()
+
+        cursor.execute("SELECT artist_id, artist_name FROM Artists ORDER BY artist_name;")
+        artists = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return genres, artists
+    
+    def execute_safe_query(query, params=None):
+     try:
+        conn = get_db_connection()
+        if conn is None:
+            return False, "Database connection failed"
+
+        cursor = conn.cursor()
+        cursor.execute(query, params or ())
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return True, None
+
+     except mysql.connector.Error as e:
+        return False, f"MySQL Error: {e}"
+    
+    @app.route("/debug/templates")
+    def debug_templates():
+        folder = os.path.join(os.path.dirname(__file__), "templates")
+        try:
+            files = os.listdir(folder)
+        except FileNotFoundError:
+            return f"Templates folder not found at: {folder}"
+        return "<br>".join(files)
 
     # default route; something to show that the API works
     @app.route("/")
     def index():
-         return render_template("index.html")
+        return render_template("index.html")
       
 
     # simple test route
@@ -146,10 +207,115 @@ def create_app():
         cursor.close()
         conn.close()
         return render_template("users.html", users=rows)
-        #return jsonify(rows)
+    
+    # Create User
+    @app.route("/users/new", methods=["GET", "POST"])
+    def create_user():
+        if request.method == "POST":
+            username = request.form.get("username")
+            email = request.form.get("email") or None
+            phone_number = request.form.get("phone_number") or None
+            dob = request.form.get("dob") or None   # "" -> None
+            genre_id = request.form.get("genre_id") or None
+            artist_id = request.form.get("artist_id") or None
+
+            conn = get_db_connection()
+            if conn is None:
+                return jsonify({"error": "Cannot connect to database"}), 500
+
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO Users (username, email, phone_number, dob, genre_id, artist_id)
+                VALUES (%s, %s, %s, %s, %s, %s);
+            """, (username, email, phone_number, dob, genre_id, artist_id))
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            return redirect(url_for("get_users"))
+
+        genres, artists = get_genres_and_artists()
+        return render_template("add_user.html", genres=genres, artists=artists)
+
+    # Edit User 
+    @app.route("/users/<int:user_id>/edit", methods=["GET", "POST"])
+    def edit_user(user_id):
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Cannot connect to database"}), 500
+
+        cursor = conn.cursor(dictionary=True)
+
+        if request.method == "POST":
+            username = request.form.get("username")
+            email = request.form.get("email") or None
+            phone_number = request.form.get("phone_number") or None
+            dob = request.form.get("dob") or None
+            genre_id = request.form.get("genre_id") or None
+            artist_id = request.form.get("artist_id") or None
+
+            query = """
+                UPDATE Users
+                SET username = %s,
+                    email = %s,
+                    phone_number = %s,
+                    dob = %s,
+                    genre_id = %s,
+                    artist_id = %s
+                WHERE user_id = %s;
+            """
+
+            params = (username, email, phone_number, dob, genre_id, artist_id, user_id)
+
+            success, error = execute_safe_query(query, params)
+
+            if not success:
+                genres, artists = get_genres_and_artists()
+                return render_template(
+                    "edit_user.html",
+                    user=user,
+                    genres=genres,
+                    artists=artists,
+                    error_message=error
+                )
+
+            return redirect(url_for("get_users"))
+
+        cursor.execute("SELECT * FROM Users WHERE user_id = %s;", (user_id,))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if not user:
+            # if user_id doesn't exist, just go back to list
+            return redirect(url_for("get_users"))
+
+        if user.get("dob"):
+            try:
+                user["dob"] = user["dob"].strftime("%Y-%m-%d")
+            except AttributeError:
+                # if it's already a string, ignore
+                pass
+
+        genres, artists = get_genres_and_artists()
+        return render_template("edit_user.html", user=user, genres=genres, artists=artists)
+
+    # Delete User 
+    @app.route("/users/<int:user_id>/delete", methods=["POST"])
+    def delete_user(user_id):
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Cannot connect to database"}), 500
+
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Users WHERE user_id = %s;", (user_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return redirect(url_for("get_users"))
 
     return app
-
 
 
 if __name__ == "__main__":
