@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Artists – Spotify DB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+</head>
+<body>
+    <a href="/" class="back-link">← Back to Home</a>
+
+    <h1>Artists</h1>
+    <p class="subtitle">Artists and their basic information.</p>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Artist name</th>
+                    <th>Popularity</th>
+                    <th>Country</th>
+                    <th>Genre ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in artists %}
+                <tr>
+                    <td>{{ a.artist_id }}</td>
+                    <td>{{ a.artist_name }}</td>
+                    <td>{{ a.artist_popularity }}</td>
+                    <td>{{ a.country }}</td>
+                    <td>{{ a.genre_id }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

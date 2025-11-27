@@ -75,7 +75,7 @@ def create_app():
 
         cursor.close()
         conn.close()
-        return jsonify(rows)
+        return render_template("artists.html", artists=rows)
 
 
     # Albums API Route 
