@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
 
 -- Load data from CSV files
 
-LOAD DATA LOCAL INFILE 'your/path/here/'
+LOAD DATA LOCAL INFILE  'C:/ProgramData/MySQL/MySQL Server 9.4/uploads/genres.csv'
 INTO TABLE Genres
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -103,7 +103,7 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (parent_genre, genre_name, genre_description, genre_id);
 
-LOAD DATA LOCAL INFILE 'your/path/here/'
+LOAD DATA LOCAL INFILE  'C:/ProgramData/MySQL/MySQL Server 9.4/uploads/artists.csv'
 IGNORE INTO TABLE Artists
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -112,7 +112,7 @@ IGNORE 1 ROWS
 (artist_id, artist_name, artist_popularity, country, @genre_id)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA LOCAL INFILE 'your/path/here/'
+LOAD DATA LOCAL INFILE  'C:/ProgramData/MySQL/MySQL Server 9.4/uploads/albums.csv'
 INTO TABLE Albums
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -121,7 +121,7 @@ IGNORE 1 ROWS
 (album_id,artist_id,genre_id,album_name,release_year,cover_url)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA LOCAL INFILE 'your/path/here/'
+LOAD DATA LOCAL INFILE  'C:/ProgramData/MySQL/MySQL Server 9.4/uploads/tracks.csv'
 INTO TABLE Tracks
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -130,7 +130,7 @@ IGNORE 1 ROWS
 (track_id, track_name, album_id, artist_id, @genre_id, duration, explicit, popularity)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA LOCAL INFILE 'your/path/here/'
+LOAD DATA LOCAL INFILE  'C:/ProgramData/MySQL/MySQL Server 9.4/uploads/audio_features.csv'
 INTO TABLE AudioFeatures
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
