@@ -314,6 +314,86 @@ def create_app():
         conn.close()
 
         return redirect(url_for("get_users"))
+    
+    @app.route("/stats")
+    def stats_page():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Cannot connect to database"}), 500
+
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT COUNT(*) AS total FROM Users;")
+        total_users = cursor.fetchone()["total"]
+
+        cursor.execute("SELECT COUNT(*) AS total FROM Artists;")
+        total_artists = cursor.fetchone()["total"]
+
+        cursor.execute("SELECT COUNT(*) AS total FROM Albums;")
+        total_albums = cursor.fetchone()["total"]
+
+        cursor.execute("SELECT COUNT(*) AS total FROM Tracks;")
+        total_tracks = cursor.fetchone()["total"]
+
+        cursor.execute("SELECT COUNT(*) AS total FROM Genres;")
+        total_genres = cursor.fetchone()["total"]
+
+        # decides the  most popular genre by users 
+        cursor.execute("""
+            SELECT g.genre_name, COUNT(*) AS total
+            FROM Users u
+            JOIN Genres g ON u.genre_id = g.genre_id
+            GROUP BY g.genre_id, g.genre_name
+            ORDER BY total DESC
+            LIMIT 1;
+        """)
+        popular_genre = cursor.fetchone()
+
+        # most popular artist by users 
+        cursor.execute("""
+            SELECT a.artist_name, COUNT(*) AS total
+            FROM Users u
+            JOIN Artists a ON u.artist_id = a.artist_id
+            GROUP BY a.artist_id, a.artist_name
+            ORDER BY total DESC
+            LIMIT 1;
+        """)
+        popular_artist = cursor.fetchone()
+
+        # users by genre 
+        cursor.execute("""
+            SELECT g.genre_name, COUNT(*) AS total
+            FROM Users u
+            JOIN Genres g ON u.genre_id = g.genre_id
+            GROUP BY g.genre_id, g.genre_name
+            ORDER BY total DESC;
+        """)
+        users_by_genre = cursor.fetchall()
+
+        # most recent added users 
+        cursor.execute("""
+            SELECT user_id, username, email
+            FROM Users
+            ORDER BY user_id DESC
+            LIMIT 5;
+        """)
+        recent_users = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return render_template(
+            "stats.html",
+            total_users=total_users,
+            total_artists=total_artists,
+            total_albums=total_albums,
+            total_tracks=total_tracks,
+            total_genres=total_genres,
+            popular_genre=popular_genre,
+            popular_artist=popular_artist,
+            users_by_genre=users_by_genre,
+            recent_users=recent_users,
+        )
 
     return app
 
