@@ -314,3 +314,61 @@ tr:hover {
     font-size: 1.2rem;
     color: #ffffff;
 }
+
+/* Artist Statistics Page */
+
+.stats-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 30px;
+    color: #fff;
+}
+
+.stats-page {
+    max-width: 900px;
+    margin: auto;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.stats-grid-small {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background-color: #181818;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.45);
+}
+
+.stat-card.wide {
+    grid-column: span 2;
+}
+
+.stat-label {
+    color: #bbbbbb;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.stats-section {
+    margin: 30px 0 10px;
+    color: #fff;
+    font-size: 1.3rem;
+}
+
