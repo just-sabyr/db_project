@@ -69,6 +69,8 @@ def create_database():
 
 
 def insert_data(rows):
+    inserted = 0
+    skipped = 0
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys = OFF;")
@@ -95,11 +97,13 @@ def insert_data(rows):
 # Skip albums without valid artist_id
 if artist_id is None:
     print(f"[WARN] Skipped album '{album}' — artist '{artist}' not found.")
+    skipped += 1
     continue
 
 # Skip empty album names
 if not album or album.strip() == "":
     print(f"[WARN] Skipped album with missing album_name.")
+    skipped += 1
     continue
 
     # Normalize empty year
@@ -108,9 +112,11 @@ if not album or album.strip() == "":
     except:
     year = None
 cur.execute(insert_sql, (artist_id, genre_id, album, year, cover))
+inserted += 1
 
 
     conn.commit()
+print(f"[SUMMARY] Inserted: {inserted} | Skipped: {skipped}")
     conn.close()
 
 
