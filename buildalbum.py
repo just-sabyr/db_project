@@ -92,7 +92,23 @@ def insert_data(rows):
         artist_id = artists.get(artist)
         genre_id = genres.get(genre)
 
-        cur.execute(insert_sql, (artist_id, genre_id, album, year, cover))
+# Skip albums without valid artist_id
+if artist_id is None:
+    print(f"[WARN] Skipped album '{album}' — artist '{artist}' not found.")
+    continue
+
+# Skip empty album names
+if not album or album.strip() == "":
+    print(f"[WARN] Skipped album with missing album_name.")
+    continue
+
+    # Normalize empty year
+    try:
+    year = int(year) if year and year.isdigit() else None
+    except:
+    year = None
+cur.execute(insert_sql, (artist_id, genre_id, album, year, cover))
+
 
     conn.commit()
     conn.close()
