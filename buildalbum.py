@@ -1,3 +1,17 @@
+"""
+buildalbum.py
+
+This script processes dataset_csv/dataset.csv and inserts album data into a local SQLite database.
+It performs:
+- dataset loading
+- normalization of artist/genre names
+- lookup artist/genre IDs
+- validation of album rows
+- insertion into Albums table
+- export back to CSV
+
+Author: Ildi
+"""
 import csv
 import sqlite3
 import os
@@ -27,7 +41,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_album_unique
 ON Albums (artist_id, album_name, release_year);
 """
 
-def load_dataset():
+def load_dataset():               """Load the main dataset.csv and return all rows as dictionaries."""
     print(f"Loading dataset from: {DATASET_PATH}")
     rows = []
     with open(DATASET_PATH, newline="", encoding="utf-8") as f:
@@ -49,7 +63,7 @@ def load_lookup(path, id_col, name_col):
             table[name] = int(r[id_col])
     return table
 
-def normalize(s):
+def normalize(s):          """Normalize strings by lowering case, removing hyphens, and condensing spaces."""
     if not s:
         return None
     s = s.strip().lower()
@@ -58,7 +72,7 @@ def normalize(s):
 
 
 
-def create_database():
+def create_database():                 """Create the Albums table + unique index inside albums.db."""
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys = OFF;") 
@@ -120,7 +134,7 @@ print(f"[SUMMARY] Inserted: {inserted} | Skipped: {skipped}")
     conn.close()
 
 
-def export_to_csv():
+def export_to_csv():                        """Export the Albums table into albums_output.csv."""
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
