@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistics – Spotify DB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+</head>
+<body>
+<div class="stats-page">
+
+    <a href="/" class="back-link">← Back to Home</a>
+
+    <h1>Database statistics</h1>
+    <p class="subtitle">
+        Overview of users, artists, albums, tracks and favourite genres.
+    </p>
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total users</div>
+            <div class="stat-value">{{ total_users }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total artists</div>
+            <div class="stat-value">{{ total_artists }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total albums</div>
+            <div class="stat-value">{{ total_albums }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total tracks</div>
+            <div class="stat-value">{{ total_tracks }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total genres</div>
+            <div class="stat-value">{{ total_genres }}</div>
+        </div>
+    </section>
+
+    <!-- popular genre / artist -->
+    <section class="stats-grid stats-grid-small">
+        <div class="stat-card wide">
+            <div class="stat-label">Most popular genre</div>
+            <div class="stat-value">
+                {% if popular_genre %}
+                    {{ popular_genre.genre_name }} ({{ popular_genre.total }} users)
+                {% else %}
+                    No data yet
+                {% endif %}
+            </div>
+        </div>
+        <div class="stat-card wide">
+            <div class="stat-label">Most popular artist</div>
+            <div class="stat-value">
+                {% if popular_artist %}
+                    {{ popular_artist.artist_name }} ({{ popular_artist.total }} users)
+                {% else %}
+                    No data yet
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- users by genre -->
+    <section class="stats-section">
+        <h2>Users by favourite genre</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Genre</th>
+                        <th>Number of users</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in users_by_genre %}
+                    <tr>
+                        <td>{{ row.genre_name }}</td>
+                        <td>{{ row.total }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not users_by_genre %}
+                    <tr>
+                        <td colspan="2">No data yet.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- recent users -->
+    <section class="stats-section">
+        <h2>Most recent users</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in recent_users %}
+                    <tr>
+                        <td>{{ u.user_id }}</td>
+                        <td>{{ u.username }}</td>
+                        <td>{{ u.email }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not recent_users %}
+                    <tr>
+                        <td colspan="3">No users yet.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+</body>
+</html>

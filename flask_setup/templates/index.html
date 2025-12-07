@@ -15,6 +15,7 @@
     </header>
 
     <main class="app-main">
+      
       <section class="card card-large">
         <h2>Start</h2>
         <p>
@@ -25,8 +26,11 @@
         <div class="button-grid"> 
           <a class="btn" href="/users">👤 View users</a>
           <a class="btn secondary" href="/genres" target="_blank">🎵 Browse genres (data view)</a>
+
+          <a class="btn" href="/stats">📊 View statistics</a>
         </div>
       </section>
+
 
       <section class="card">
         <h2>Database sections</h2>
@@ -39,16 +43,22 @@
           <a class="pill-link" href="/tracks" target="_blank">Tracks</a>
           <a class="pill-link" href="/audiofeatures" target="_blank">Audio features</a>
           <a class="pill-link" href="/users">Users (table)</a>
+
+          <a class="pill-link" href="/stats">Statistics</a>
         </div>
       </section>
+
+
       <section class="card">
         <h2>How to use this page</h2>
         <ul class="info-list">
           <li>Use <strong>“View users”</strong> to see a clean table with user information.</li>
           <li>Open the other sections (genres, artists, albums, etc.) to inspect the raw data we imported into MySQL.</li>
+          <li>Use the <strong>Statistics</strong> page to see insights such as most popular genres and overall database counts.</li>
           <li>This dashboard is built with <strong>Flask + MySQL</strong> and is mainly for learning and demonstration.</li>
         </ul>
       </section>
+
     </main>
 
     <footer class="app-footer">
