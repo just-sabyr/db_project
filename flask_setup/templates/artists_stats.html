@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Artist Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+</head>
+<body>
+
+    <h1 class="stats-title">Artist Statistics</h1>
+
+    <div class="stats-page">
+
+        <div class="stats-grid">
+
+            <!-- Total Artists -->
+            <div class="stat-card">
+                <div class="stat-label">Total Artists</div>
+                <div class="stat-value">{{ total_artists }}</div>
+            </div>
+
+            <!-- Average Popularity -->
+            <div class="stat-card">
+                <div class="stat-label">Average Popularity</div>
+                <div class="stat-value">{{ avg_popularity | round(2) }}</div>
+            </div>
+
+            <!-- Most Popular Artist -->
+            <div class="stat-card wide">
+                <div class="stat-label">Most Popular Artist</div>
+                <div class="stat-value">{{ top_artist.artist_name }} ({{ top_artist.artist_popularity }})</div>
+            </div>
+
+        </div>
+
+        <h2 class="stats-section">Artists by Country</h2>
+        <div class="stats-grid-small">
+            {% for row in artists_by_country %}
+                <div class="stat-card">
+                    <div class="stat-label">{{ row.country }}</div>
+                    <div class="stat-value">{{ row.count }}</div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</body>
+</html>
