@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Log in – Spotify DB</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+</head>
+<body class="user-form-page">
+<div class="user-form-container">
+
+  <header class="user-form-header">
+    <a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
+    <h1>Log in</h1>
+    <p class="subtitle">
+      Log in as an admin to manage users and view statistics.
+    </p>
+  </header>
+
+  <section class="user-form-card">
+    {% if error %}
+    <div class="error-box">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" class="user-form-grid">
+      <div class="form-row">
+        <label for="username">Username</label>
+        <input id="username"
+               type="text"
+               name="username"
+               placeholder="admin"
+               required>
+      </div>
+
+      <div class="form-row">
+        <label for="password">Password</label>
+        <input id="password"
+               type="password"
+               name="password"
+               placeholder="••••••••"
+               required>
+      </div>
+
+      <div class="form-row form-row-full">
+        <button type="submit" class="btn primary-btn">Sign in</button>
+      </div>
+    </form>
+  </section>
+
+</div>
+</body>
+</html>
