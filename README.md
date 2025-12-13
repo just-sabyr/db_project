@@ -99,7 +99,7 @@ SELECT * FROM genres ORDER BY genre_id LIMIT 20;
 ## Run the flask server
 
 ```bash
-         cd flask_setup
+   cd flask_setup
 ```
 
 ```bash
