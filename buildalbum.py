@@ -9,6 +9,8 @@ It performs:
 - validation of album rows
 - insertion into Albums table
 - export back to CSV
+- Albums store foreign keys (artist_id, genre_id) to preserve normalization
+- Human-readable artist and genre names are resolved via JOINs at export time
 
 Author: Ildi
 """
