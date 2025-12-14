@@ -75,7 +75,7 @@ def normalize(s):          """Normalize strings by lowering case, removing hyphe
 def create_database():                 """Create the Albums table + unique index inside albums.db."""
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-    cur.execute("PRAGMA foreign_keys = OFF;") 
+    cur.execute("PRAGMA foreign_keys = ON;")
     cur.execute(CREATE_TABLE_SQL)
     cur.execute(CREATE_INDEX_SQL)
     conn.commit()
@@ -87,7 +87,7 @@ def insert_data(rows):
     skipped = 0
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-    cur.execute("PRAGMA foreign_keys = OFF;")
+    cur.execute("PRAGMA foreign_keys = ON;")
 
     artists = load_lookup(ARTISTS_PATH, "artist_id", "artist_name")
     genres = load_lookup(GENRES_PATH, "genre_id", "genre")
