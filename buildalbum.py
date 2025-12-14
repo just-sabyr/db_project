@@ -114,6 +114,12 @@ if artist_id is None:
     skipped += 1
     continue
 
+# Skip albums without valid genre_id
+if genre_id is None:
+    print(f"[WARN] Skipped album '{album}' — genre '{genre}' not found.")
+    skipped += 1
+    continue
+
 # Skip empty album names
 if not album or album.strip() == "":
     print(f"[WARN] Skipped album with missing album_name.")
