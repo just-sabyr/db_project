@@ -138,8 +138,21 @@ def export_to_csv():                        """Export the Albums table into albu
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
-    rows = cur.execute("SELECT * FROM Albums").fetchall()
-    headers = [d[0] for d in cur.description]
+query = """
+    SELECT
+        a.album_id,
+        a.album_name,
+        ar.artist_name,
+        g.genre AS genre,
+        a.release_year,
+        a.cover_url
+    FROM Albums a
+    JOIN Artists ar ON a.artist_id = ar.artist_id
+    JOIN Genres g ON a.genre_id = g.genre_id;
+    """
+
+       rows = cur.execute(query).fetchall()
+        headers = [d[0] for d in cur.description]
 
     with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
