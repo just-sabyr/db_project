@@ -3,6 +3,7 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 import os
+from functools import wraps
 
 # load the variables from the .env file 
 load_dotenv()
@@ -69,13 +70,29 @@ def create_app():
         return genres, artists
 
     def login_required(view_func):
+        @wraps(view_func)
         def wrapped(*args, **kwargs):
             if not session.get("logged_in"):
                 return redirect(url_for("login"))
             return view_func(*args, **kwargs)
 
-        wrapped.__name__ = view_func.__name__
         return wrapped
+
+    # Role-based access decorator 
+    def role_required(*roles):
+        def decorator(view_func):
+            @wraps(view_func)
+            def wrapped(*args, **kwargs):
+                if not session.get("logged_in"):
+                    return redirect(url_for("login"))
+
+                user_role = session.get("role")
+                if user_role not in roles:
+                    return "Forbidden: you don't have permission for this page.", 403
+
+                return view_func(*args, **kwargs)
+            return wrapped
+        return decorator
 
     @app.route("/debug/templates")
     def debug_templates():
@@ -197,7 +214,7 @@ def create_app():
         return render_template("users.html", users=rows)
 
     @app.route("/users/new", methods=["GET", "POST"])
-    @login_required
+    @role_required("admin")
     def create_user():
         if request.method == "POST":
             username = request.form.get("username")
@@ -224,7 +241,7 @@ def create_app():
         return render_template("add_user.html", genres=genres, artists=artists)
 
     @app.route("/users/<int:user_id>/edit", methods=["GET", "POST"])
-    @login_required
+    @role_required("admin")
     def edit_user(user_id):
         conn = get_db_connection()
         if conn is None:
@@ -284,7 +301,7 @@ def create_app():
         return render_template("edit_user.html", user=user, genres=genres, artists=artists)
 
     @app.route("/users/<int:user_id>/delete", methods=["POST"])
-    @login_required
+    @role_required("admin")
     def delete_user(user_id):
         query = "DELETE FROM Users WHERE user_id = %s;"
         success, error = execute_safe_query(query, (user_id,))
@@ -388,6 +405,7 @@ def create_app():
             if username == admin_user and password == admin_password:
                 session["logged_in"] = True
                 session["username"] = username
+                session["role"] = "admin"   #  ADDED: role 
                 return redirect(url_for("get_users"))
             else:
                 error = "Wrong username or password."

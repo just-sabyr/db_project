@@ -1,69 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Spotify Database Dashboard</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-  <div class="app-wrapper">
-    <header class="app-header">
-      <h1>Spotify Database Dashboard</h1>
-      <p class="subtitle">
-        Explore the music database with genres, artists, albums, tracks, audio features and users.
+{% extends "base.html" %}
+
+{% block title %}Spotify Database Dashboard{% endblock %}
+
+{% block content %}
+<div class="app-wrapper">
+
+  <header class="app-header">
+    <h1>Spotify Database Dashboard</h1>
+    <p class="subtitle">
+      A Flask + MySQL dashboard for exploring a Spotify-inspired music database.
+    </p>
+  </header>
+
+  <main class="app-main">
+
+    <section class="card card-large">
+      <h2>Welcome</h2>
+      <p>
+        This dashboard allows you to explore genres, artists, albums, tracks,
+        audio features, users, and statistics using the navigation bar above.
       </p>
-    </header>
 
-    <main class="app-main">
-      
-      <section class="card card-large">
-        <h2>Start</h2>
-        <p>
-          This page lets you quickly browse parts of the database.
-          Choose one of the options below to see the data in your browser.
-        </p>
+      <p>
+        All data is stored in a MySQL database and presented using Flask templates.
+        The project is designed for learning, experimentation, and demonstration.
+      </p>
+    </section>
 
-        <div class="button-grid"> 
-          <a class="btn" href="/users">👤 View users</a>
-          <a class="btn secondary" href="/genres" target="_blank">🎵 Browse genres (data view)</a>
+    <section class="card">
+      <h2>How to use this application</h2>
+      <ul class="info-list">
+        <li>Use the navigation bar to move between different database sections.</li>
+        <li>The <strong>Users</strong> page allows viewing and managing user records.</li>
+        <li>The <strong>Statistics</strong> page provides insights such as popular genres and totals.</li>
+        <li>Login is required to access restricted sections.</li>
+      </ul>
+    </section>
 
-          <a class="btn" href="/stats">📊 View statistics</a>
-        </div>
-      </section>
+  </main>
 
+  <footer class="app-footer">
+    <p>DB Project — Flask + MySQL — Spotify-inspired design</p>
+  </footer>
 
-      <section class="card">
-        <h2>Database sections</h2>
-        <p>Click to explore different parts of the music dataset:</p>
-
-        <div class="button-grid">
-          <a class="pill-link" href="/genres" target="_blank">Genres</a>
-          <a class="pill-link" href="/artists" target="_blank">Artists</a>
-          <a class="pill-link" href="/albums" target="_blank">Albums</a>
-          <a class="pill-link" href="/tracks" target="_blank">Tracks</a>
-          <a class="pill-link" href="/audiofeatures" target="_blank">Audio features</a>
-          <a class="pill-link" href="/users">Users (table)</a>
-
-          <a class="pill-link" href="/stats">Statistics</a>
-        </div>
-      </section>
-
-
-      <section class="card">
-        <h2>How to use this page</h2>
-        <ul class="info-list">
-          <li>Use <strong>“View users”</strong> to see a clean table with user information.</li>
-          <li>Open the other sections (genres, artists, albums, etc.) to inspect the raw data we imported into MySQL.</li>
-          <li>Use the <strong>Statistics</strong> page to see insights such as most popular genres and overall database counts.</li>
-          <li>This dashboard is built with <strong>Flask + MySQL</strong> and is mainly for learning and demonstration.</li>
-        </ul>
-      </section>
-
-    </main>
-
-    <footer class="app-footer">
-      <p>DB Project — Flask + MySQL — Spotify-inspired design</p>
-    </footer>
-  </div>
-</body>
-</html>
+</div>
+{% endblock %}
