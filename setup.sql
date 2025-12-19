@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS Albums (                                 -- Ildi
 
     PRIMARY KEY (album_id),
     
-    UNIQUE (artist_id, album_name)
+    UNIQUE (artist_id, album_name),
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),   
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) 
 );
@@ -110,15 +110,6 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (artist_id, artist_name, artist_popularity, country, @genre_id)
-SET genre_id = NULLIF(@genre_id, '');
-
-LOAD DATA LOCAL INFILE  'C:/ProgramData/MySQL/MySQL Server 9.4/uploads/albums.csv'
-INTO TABLE Albums
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(album_id,artist_id,genre_id,album_name,release_year,cover_url)
 SET genre_id = NULLIF(@genre_id, '');
 
 LOAD DATA LOCAL INFILE  'C:/ProgramData/MySQL/MySQL Server 9.4/uploads/tracks.csv'
