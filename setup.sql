@@ -121,7 +121,7 @@ IGNORE 1 ROWS
 (track_id, track_name, album_id, artist_id, @genre_id, duration, explicit, popularity)
 SET genre_id = NULLIF(@genre_id, '');
 
-LOAD DATA LOCAL INFILE  'dataset_csv/AudioFeatures.csv'
+LOAD DATA LOCAL INFILE 'dataset_csv/audio_features.csv'
 INTO TABLE AudioFeatures
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
