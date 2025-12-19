@@ -112,6 +112,15 @@ IGNORE 1 ROWS
 (artist_id, artist_name, artist_popularity, country, @genre_id)
 SET genre_id = NULLIF(@genre_id, '');
 
+LOAD DATA LOCAL INFILE  'dataset_csv/albums.csv'
+INTO TABLE Albums
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(album_id,artist_id,genre_id,album_name,release_year,cover_url)
+SET genre_id = NULLIF(@genre_id, '');
+
 LOAD DATA LOCAL INFILE  'dataset_csv/tracks.csv'
 INTO TABLE Tracks
 FIELDS TERMINATED BY ','
