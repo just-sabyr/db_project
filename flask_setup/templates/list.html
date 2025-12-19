@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="app-wrapper">
+  <header class="app-header">
+    <h1>{{ title }}</h1>
+    {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
+  </header>
+
+  <section class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+      <div>
+        {% if description %}<p style="margin:0;">{{ description }}</p>{% endif %}
+      </div>
+
+      {% if add_url %}
+        <a class="btn" href="{{ add_url }}">+ Add</a>
+      {% endif %}
+    </div>
+
+    <div style="overflow:auto; margin-top:16px;">
+      <table style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            {% for col in columns %}
+              <th style="text-align:left; padding:10px; border-bottom:1px solid #333;">{{ col }}</th>
+            {% endfor %}
+
+            {% if show_actions %}
+              <th style="text-align:left; padding:10px; border-bottom:1px solid #333;">Actions</th>
+            {% endif %}
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              {% for key in keys %}
+                <td style="padding:10px; border-bottom:1px solid #222;">
+                  {{ row.get(key, "") }}
+                </td>
+              {% endfor %}
+
+              {% if show_actions %}
+                <td style="padding:10px; border-bottom:1px solid #222; white-space:nowrap;">
+                  {% if edit_url_builder %}
+                    <a class="pill-link" href="{{ edit_url_builder(row) }}">Edit</a>
+                  {% endif %}
+
+                  {% if delete_url_builder %}
+                    <form method="post" action="{{ delete_url_builder(row) }}" style="display:inline;">
+                      <button class="btn secondary" type="submit" onclick="return confirm('Delete this record?')">
+                        Delete
+                      </button>
+                    </form>
+                  {% endif %}
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+
+          {% if rows|length == 0 %}
+            <tr>
+              <td colspan="{{ columns|length + (1 if show_actions else 0) }}" style="padding:16px;">
+                No records found.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Add - {{ title }}{% endblock %}
+
+{% block content %}
+<div class="app-wrapper">
+  <header class="app-header">
+    <h1>Add {{ title }}</h1>
+    {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
+  </header>
+
+  <section class="card">
+    {% if error_message %}
+      <p style="color:#ff8080; font-weight:600;">{{ error_message }}</p>
+    {% endif %}
+
+    <form method="post">
+      {% for field in fields %}
+        <div style="margin-bottom:14px;">
+          <label style="display:block; margin-bottom:6px; font-weight:600;">{{ field.label }}</label>
+
+          {% if field.type == "select" %}
+            <select name="{{ field.name }}" class="pill-link" style="width:100%; padding:10px;">
+              <option value="">-- none --</option>
+              {% for opt in field.options %}
+                <option value="{{ opt.value }}">{{ opt.text }}</option>
+              {% endfor %}
+            </select>
+
+          {% elif field.type == "date" %}
+            <input type="date" name="{{ field.name }}" style="width:100%; padding:10px;" />
+
+          {% else %}
+            <input type="text" name="{{ field.name }}" style="width:100%; padding:10px;" />
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div style="display:flex; gap:10px;">
+        <button class="btn" type="submit">Save</button>
+        <a class="btn secondary" href="{{ cancel_url }}">Cancel</a>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}

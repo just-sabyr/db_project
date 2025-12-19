@@ -94,6 +94,29 @@ def create_app():
             return wrapped
         return decorator
 
+    # helpers for unified templates 
+    def build_user_fields(genres, artists):
+        return [
+            {"name": "username", "label": "Username", "type": "text"},
+            {"name": "email", "label": "Email", "type": "text"},
+            {"name": "phone_number", "label": "Phone Number", "type": "text"},
+            {"name": "dob", "label": "Date of Birth", "type": "date"},
+            {
+                "name": "genre_id", "label": "Favorite Genre", "type": "select",
+                "options": [{"value": g["genre_id"], "text": g["genre_name"]} for g in genres]
+            },
+            {
+                "name": "artist_id", "label": "Favorite Artist", "type": "select",
+                "options": [{"value": a["artist_id"], "text": a["artist_name"]} for a in artists]
+            },
+        ]
+
+    def user_edit_url(row):
+        return url_for("edit_user", user_id=row["user_id"])
+
+    def user_delete_url(row):
+        return url_for("delete_user", user_id=row["user_id"])
+
     @app.route("/debug/templates")
     def debug_templates():
         folder = os.path.join(os.path.dirname(__file__), "templates")
@@ -124,7 +147,19 @@ def create_app():
         cursor.close()
         conn.close()
 
-        return render_template("genres.html", genres=rows)
+        return render_template(
+            "list.html",
+            title="Genres",
+            subtitle="Browse genres from the database",
+            columns=["genre_id", "parent_genre", "genre_name", "genre_description"],
+            keys=["genre_id", "parent_genre", "genre_name", "genre_description"],
+            rows=rows,
+            show_actions=False,
+            add_url=None,
+            edit_url_builder=None,
+            delete_url_builder=None,
+            description=None
+        )
 
     @app.route("/artists")
     def get_artists():
@@ -139,7 +174,19 @@ def create_app():
         cursor.close()
         conn.close()
 
-        return render_template("artists.html", artists=rows)
+        return render_template(
+            "list.html",
+            title="Artists",
+            subtitle="Browse artists from the database",
+            columns=["artist_id", "artist_name", "country", "genre_id", "artist_popularity"],
+            keys=["artist_id", "artist_name", "country", "genre_id", "artist_popularity"],
+            rows=rows,
+            show_actions=False,
+            add_url=None,
+            edit_url_builder=None,
+            delete_url_builder=None,
+            description=None
+        )
 
     @app.route("/albums")
     def get_albums():
@@ -154,7 +201,19 @@ def create_app():
         cursor.close()
         conn.close()
 
-        return render_template("albums.html", albums=rows)
+        return render_template(
+            "list.html",
+            title="Albums",
+            subtitle="Browse albums from the database",
+            columns=["album_id", "album_name", "release_year", "artist_id", "genre_id", "cover_url"],
+            keys=["album_id", "album_name", "release_year", "artist_id", "genre_id", "cover_url"],
+            rows=rows,
+            show_actions=False,
+            add_url=None,
+            edit_url_builder=None,
+            delete_url_builder=None,
+            description=None
+        )
 
     @app.route("/tracks")
     def get_tracks():
@@ -172,7 +231,19 @@ def create_app():
         cursor.close()
         conn.close()
 
-        return render_template("tracks.html", tracks=rows)
+        return render_template(
+            "list.html",
+            title="Tracks",
+            subtitle="Browse tracks from the database",
+            columns=["track_id", "track_name", "album_id", "artist_id", "genre_id", "duration", "explicit", "popularity"],
+            keys=["track_id", "track_name", "album_id", "artist_id", "genre_id", "duration", "explicit", "popularity"],
+            rows=rows,
+            show_actions=False,
+            add_url=None,
+            edit_url_builder=None,
+            delete_url_builder=None,
+            description=None
+        )
 
     @app.route("/audiofeatures")
     def get_audio_features():
@@ -190,7 +261,19 @@ def create_app():
         cursor.close()
         conn.close()
 
-        return render_template("audiofeatures.html", features=rows)
+        return render_template(
+            "list.html",
+            title="Audio Features",
+            subtitle="Browse audio feature records",
+            columns=["feature_id", "track_id", "danceability", "energy", "valence", "tempo", "loudness", "acousticness"],
+            keys=["feature_id", "track_id", "danceability", "energy", "valence", "tempo", "loudness", "acousticness"],
+            rows=rows,
+            show_actions=False,
+            add_url=None,
+            edit_url_builder=None,
+            delete_url_builder=None,
+            description=None
+        )
 
      # Users API Route
 
@@ -211,11 +294,26 @@ def create_app():
         cursor.close()
         conn.close()
 
-        return render_template("users.html", users=rows)
+        return render_template(
+            "list.html",
+            title="Users",
+            subtitle="View and manage users",
+            columns=["user_id", "username", "email", "phone_number", "dob", "genre_id", "artist_id"],
+            keys=["user_id", "username", "email", "phone_number", "dob", "genre_id", "artist_id"],
+            rows=rows,
+            show_actions=True,
+            add_url=url_for("create_user"),
+            edit_url_builder=user_edit_url,
+            delete_url_builder=user_delete_url,
+            description=None
+        )
 
     @app.route("/users/new", methods=["GET", "POST"])
     @role_required("admin")
     def create_user():
+        genres, artists = get_genres_and_artists()
+        fields = build_user_fields(genres, artists)
+
         if request.method == "POST":
             username = request.form.get("username")
             email = request.form.get("email") or None
@@ -232,13 +330,25 @@ def create_app():
 
             success, error = execute_safe_query(query, params)
             if not success:
-                genres, artists = get_genres_and_artists()
-                return render_template("add_user.html", genres=genres, artists=artists, error_message=error)
+                return render_template(
+                    "add.html",
+                    title="User",
+                    subtitle="Create a new user record",
+                    fields=fields,
+                    cancel_url=url_for("get_users"),
+                    error_message=error
+                )
 
             return redirect(url_for("get_users"))
 
-        genres, artists = get_genres_and_artists()
-        return render_template("add_user.html", genres=genres, artists=artists)
+        return render_template(
+            "add.html",
+            title="User",
+            subtitle="Create a new user record",
+            fields=fields,
+            cancel_url=url_for("get_users"),
+            error_message=None
+        )
 
     @app.route("/users/<int:user_id>/edit", methods=["GET", "POST"])
     @role_required("admin")
@@ -264,6 +374,9 @@ def create_app():
             except AttributeError:
                 pass
 
+        genres, artists = get_genres_and_artists()
+        fields = build_user_fields(genres, artists)
+
         if request.method == "POST":
             username = request.form.get("username")
             email = request.form.get("email") or None
@@ -286,19 +399,35 @@ def create_app():
 
             success, error = execute_safe_query(query, params)
             if not success:
-                genres, artists = get_genres_and_artists()
                 return render_template(
-                    "edit_user.html",
-                    user=user,
-                    genres=genres,
-                    artists=artists,
+                    "edit.html",
+                    title="User",
+                    subtitle=f"Editing user_id = {user_id}",
+                    fields=fields,
+                    values={
+                        **user,
+                        "username": username,
+                        "email": email,
+                        "phone_number": phone_number,
+                        "dob": dob,
+                        "genre_id": genre_id,
+                        "artist_id": artist_id,
+                    },
+                    cancel_url=url_for("get_users"),
                     error_message=error
                 )
 
             return redirect(url_for("get_users"))
 
-        genres, artists = get_genres_and_artists()
-        return render_template("edit_user.html", user=user, genres=genres, artists=artists)
+        return render_template(
+            "edit.html",
+            title="User",
+            subtitle=f"Editing user_id = {user_id}",
+            fields=fields,
+            values=user,
+            cancel_url=url_for("get_users"),
+            error_message=None
+        )
 
     @app.route("/users/<int:user_id>/delete", methods=["POST"])
     @role_required("admin")
