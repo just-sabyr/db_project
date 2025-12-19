@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS Albums (                                 -- Ildi
 
     PRIMARY KEY (album_id),
     
-    UNIQUE (artist_id, album_name, release_year),   
+    UNIQUE (artist_id, album_name)
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),   
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) 
 );
