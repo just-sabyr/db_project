@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 buildalbum.py
 
@@ -58,7 +58,15 @@ written = 0
 skipped = 0
 
 with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as out_f:
-    fieldnames = ["album_id", "album_name", "artist_id", "genre_id"]
+    fieldnames = [
+    "album_id",
+    "album_name",
+    "artist_id",
+    "genre_id",
+    "release_year",
+    "cover_url"
+]
+
     writer = csv.DictWriter(out_f, fieldnames=fieldnames)
     writer.writeheader()
 
@@ -97,11 +105,14 @@ with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as out_f:
             albums_seen.add(dedup_key)
 
             writer.writerow({
-                "album_id": album_id,
-                "album_name": album_name,
-                "artist_id": artist_id,
-                "genre_id": genre_id
-            })
+            "album_id": album_id,
+            "album_name": album_name,
+            "artist_id": artist_id,
+            "genre_id": genre_id,
+            "release_year": "",
+            "cover_url": ""
+    })
+
 
             album_id += 1
             written += 1
