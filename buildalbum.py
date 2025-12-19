@@ -1,170 +1,112 @@
+#!/usr/bin/env python3
 """
 buildalbum.py
 
-Generates Albums table entries from dataset.csv using MySQL.
-Albums are derived from track-level data to ensure referential integrity.
+Builds albums.csv from dataset.csv by resolving artist_id and genre_id
+using artists.csv and genres.csv.
 
-Pipeline:
-dataset.csv
- → resolve artist_id, genre_id
- → deduplicate (artist_id, album_name)
- → insert into Albums
- → export Albums to CSV (inspection only)
-
-Author: Ildi
+Handles multi-artist rows by selecting the FIRST artist.
 """
 
 import csv
-import mysql.connector
 from pathlib import Path
-from dotenv import load_dotenv
-import os
 
-# -------------------- ENV --------------------
-load_dotenv()
-
-DB_CONFIG = {
-    "host": os.getenv("DB_HOST", "localhost"),
-    "user": os.getenv("DB_USER", "root"),
-    "password": os.getenv("DB_PASSWORD"),
-    "database": os.getenv("DB_NAME"),
-    "auth_plugin": "mysql_native_password"
-}
-
-# -------------------- PATHS --------------------
+# ------------------ Paths ------------------
 BASE_DIR = Path(__file__).parent
-DATASET_PATH = BASE_DIR / "dataset_csv" / "dataset.csv"
-ARTISTS_PATH = BASE_DIR / "dataset_csv" / "artists.csv"
-GENRES_PATH = BASE_DIR / "dataset_csv" / "genres.csv"
-OUTPUT_PATH = BASE_DIR / "albums_output.csv"
+DATA_DIR = BASE_DIR / "dataset_csv"
 
-# -------------------- HELPERS --------------------
-def normalize(s):
-    if not s:
-        return None
-    s = s.strip().lower()
-    s = s.replace("-", " ").replace("_", " ")
-    return " ".join(s.split())
+DATASET_CSV = DATA_DIR / "dataset.csv"
+ARTISTS_CSV = DATA_DIR / "artists.csv"
+GENRES_CSV = DATA_DIR / "genres.csv"
+OUTPUT_CSV = DATA_DIR / "albums.csv"
 
-def parse_year(y):
-    try:
-        return int(float(y))
-    except:
-        return None
+# ------------------ Helpers ------------------
+def normalize(text):
+    return text.strip().lower()
 
-# -------------------- LOADERS --------------------
-def load_dataset():
-    with open(DATASET_PATH, newline="", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-def load_lookup(path, id_col, name_col):
-    lookup = {}
-    with open(path, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for r in reader:
-            name = normalize(r[name_col])
-            if name:
-                lookup[name] = int(r[id_col])
-    return lookup
-
-# -------------------- DB --------------------
-def get_connection():
-    return mysql.connector.connect(**DB_CONFIG)
-
-# -------------------- INSERT LOGIC --------------------
-def insert_albums(rows):
-    conn = get_connection()
-    cur = conn.cursor()
-
-    artists = load_lookup(ARTISTS_PATH, "artist_id", "artist_name")
-    genres = load_lookup(GENRES_PATH, "genre_id", "genre")
-
-    insert_sql = """
-        INSERT IGNORE INTO Albums
-        (artist_id, genre_id, album_name, release_year, cover_url)
-        VALUES (%s, %s, %s, %s, %s);
+def extract_primary_artist(artists_field):
     """
-
-    seen = set()
-    inserted = 0
-    skipped = 0
-
-    for r in rows:
-        artist_name = normalize(r.get("artists") or r.get("artist_name"))
-        album_name = r.get("album_name")
-        genre_name = normalize(r.get("track_genre"))
-        release_year = parse_year(r.get("release_year"))
-
-        if not artist_name or not album_name or not genre_name:
-            skipped += 1
-            continue
-
-        artist_id = artists.get(artist_name)
-        genre_id = genres.get(genre_name)
-
-        if artist_id is None or genre_id is None:
-            skipped += 1
-            continue
-
-        key = (artist_id, album_name)
-        if key in seen:
-            continue
-        seen.add(key)
-
-        cur.execute(
-            insert_sql,
-            (artist_id, genre_id, album_name, release_year, None)
-        )
-
-        if cur.rowcount > 0:
-            inserted += 1
-
-    conn.commit()
-    conn.close()
-
-    print(f"[ALBUMS] Inserted: {inserted}")
-    print(f"[ALBUMS] Skipped: {skipped}")
-
-# -------------------- EXPORT --------------------
-def export_albums():
-    conn = get_connection()
-    cur = conn.cursor()
-
-    query = """
-        SELECT
-            a.album_id,
-            a.album_name,
-            ar.artist_name,
-            g.genre,
-            a.release_year,
-            a.cover_url
-        FROM Albums a
-        JOIN Artists ar ON a.artist_id = ar.artist_id
-        JOIN Genres g ON a.genre_id = g.genre_id
-        ORDER BY ar.artist_name, a.album_name;
+    Spotify datasets store artists as 'Artist1;Artist2;Artist3'
+    We take the first one.
     """
+    if not artists_field:
+        return ""
+    return artists_field.split(";")[0]
 
-    cur.execute(query)
-    rows = cur.fetchall()
-    headers = [desc[0] for desc in cur.description]
+# ------------------ Load artists ------------------
+artist_lookup = {}
+with open(ARTISTS_CSV, newline="", encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        artist_name = normalize(row["artist_name"])
+        artist_lookup[artist_name] = {
+            "artist_id": row["artist_id"],
+            "genre_id": row["genre_id"]
+        }
 
-    with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(headers)
-        writer.writerows(rows)
+# ------------------ Load genres ------------------
+genre_lookup = {}
+with open(GENRES_CSV, newline="", encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        genre_lookup[normalize(row["genre"])] = row["genre_id"]
 
-    conn.close()
-    print(f"[EXPORT] Albums written to {OUTPUT_PATH}")
+# ------------------ Build albums ------------------
+albums_seen = set()
+album_id = 1
+written = 0
+skipped = 0
 
-# -------------------- MAIN --------------------
-def main():
-    if not DATASET_PATH.exists():
-        raise FileNotFoundError("dataset.csv not found")
+with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as out_f:
+    fieldnames = ["album_id", "album_name", "artist_id", "genre_id"]
+    writer = csv.DictWriter(out_f, fieldnames=fieldnames)
+    writer.writeheader()
 
-    rows = load_dataset()
-    insert_albums(rows)
-    export_albums()
-    print("[DONE] Albums generated successfully")
+    with open(DATASET_CSV, newline="", encoding="utf-8") as data_f:
+        reader = csv.DictReader(data_f)
 
-if __name__ == "__main__":
-    main()
+        for row in reader:
+            album_name = row.get("album_name", "").strip()
+            primary_artist = extract_primary_artist(row.get("artists", ""))
+            artist_name = normalize(primary_artist)
+            genre_name = normalize(row.get("genre", ""))
+
+            if not album_name or not artist_name:
+                skipped += 1
+                continue
+
+            if artist_name not in artist_lookup:
+                skipped += 1
+                continue
+
+            artist_id = artist_lookup[artist_name]["artist_id"]
+
+            # Prefer artist.genre_id, fallback to dataset genre
+            genre_id = artist_lookup[artist_name]["genre_id"]
+            if not genre_id:
+                genre_id = genre_lookup.get(genre_name)
+
+            if not genre_id:
+                skipped += 1
+                continue
+
+            dedup_key = (album_name.lower(), artist_id)
+            if dedup_key in albums_seen:
+                continue
+
+            albums_seen.add(dedup_key)
+
+            writer.writerow({
+                "album_id": album_id,
+                "album_name": album_name,
+                "artist_id": artist_id,
+                "genre_id": genre_id
+            })
+
+            album_id += 1
+            written += 1
+
+print("\nDONE")
+print(f"Albums written: {written}")
+print(f"Rows skipped: {skipped}")
+print(f"Output -> {OUTPUT_CSV}")
