@@ -58,12 +58,12 @@
 
   <div class="navbar-right">
     <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a>
-    <a href="{{ url_for('get_users') }}" class="{% if request.path.startswith('/users') %}active{% endif %}">Users</a>
-    <a href="{{ url_for('get_genres') }}" class="{% if request.path.startswith('/genres') %}active{% endif %}">Genres</a>
-    <a href="{{ url_for('get_artists') }}" class="{% if request.path.startswith('/artists') %}active{% endif %}">Artists</a>
-    <a href="{{ url_for('get_albums') }}" class="{% if request.path.startswith('/albums') %}active{% endif %}">Albums</a>
-    <a href="{{ url_for('get_tracks') }}" class="{% if request.path.startswith('/tracks') %}active{% endif %}">Tracks</a>
-    <a href="{{ url_for('get_audio_features') }}" class="{% if request.path.startswith('/audiofeatures') %}active{% endif %}">Audio</a>
+    <a href="{{ url_for('users.get_users') }}" class="{% if request.path.startswith('/users') %}active{% endif %}">Users</a>
+    <a href="{{ url_for('genres.get_genres') }}" class="{% if request.path.startswith('/genres') %}active{% endif %}">Genres</a>
+    <a href="{{ url_for('artists.get_artists') }}" class="{% if request.path.startswith('/artists') %}active{% endif %}">Artists</a>
+    <a href="{{ url_for('albums.get_albums') }}" class="{% if request.path.startswith('/albums') %}active{% endif %}">Albums</a>
+    <a href="{{ url_for('tracks.get_tracks') }}" class="{% if request.path.startswith('/tracks') %}active{% endif %}">Tracks</a>
+    <a href="{{ url_for('audiofeatures.get_audio_features') }}" class="{% if request.path.startswith('/audiofeatures') %}active{% endif %}">Audio</a>
     <a href="{{ url_for('stats_page') }}" class="{% if request.path.startswith('/stats') %}active{% endif %}">Stats</a>
 
     {% if session.get("logged_in") and session.get("role") == "admin" %}

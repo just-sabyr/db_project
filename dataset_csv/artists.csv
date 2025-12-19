@@ -323,7 +323,7 @@ artist_id,artist_name,artist_popularity,country,genre_id
 322,Adam Turley,53,Unknown,40.0
 323,Adamlar,38,Unknown,116.0
 324,Adan La Amenaza,50,Unknown,87.0
-325,Adana Twins,42,Europe,43.0
+325,    ,42,Europe,43.0
 326,Adaro,49,Unknown,53.0
 327,Adarsh Rao,51,India,98.0
 328,Adason Lo,21,China,94.0

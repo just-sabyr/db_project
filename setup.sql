@@ -118,14 +118,14 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(album_id,artist_id,genre_id,album_name,release_year,cover_url)
+(album_id,album_name,artist_id,genre_id,release_year,cover_url)
 SET genre_id = NULLIF(@genre_id, '');
 
 LOAD DATA LOCAL INFILE  'dataset_csv/tracks.csv'
 INTO TABLE Tracks
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
+LINES TERMINATED BY '\n'    
 IGNORE 1 ROWS
 (track_id, track_name, album_id, artist_id, @genre_id, duration, explicit, popularity)
 SET genre_id = NULLIF(@genre_id, '');
