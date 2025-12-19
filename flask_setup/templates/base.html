@@ -50,40 +50,37 @@
 
 <body>
 
-  <div class="navbar">
-    <div class="navbar-left">
-      <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">
-        Spotify DB
-      </a>
-    </div>
-
-    <div class="navbar-right">
-      <!-- ✅ Active link highlighting using request.endpoint -->
-      <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a>
-      <a href="{{ url_for('get_genres') }}" class="{% if request.endpoint == 'get_genres' %}active{% endif %}">Genres</a>
-      <a href="{{ url_for('get_artists') }}" class="{% if request.endpoint == 'get_artists' %}active{% endif %}">Artists</a>
-      <a href="{{ url_for('get_albums') }}" class="{% if request.endpoint == 'get_albums' %}active{% endif %}">Albums</a>
-      <a href="{{ url_for('get_tracks') }}" class="{% if request.endpoint == 'get_tracks' %}active{% endif %}">Tracks</a>
-      <a href="{{ url_for('get_audio_features') }}" class="{% if request.endpoint == 'get_audio_features' %}active{% endif %}">
-        Audio Features
-      </a>
-
-      {% if session.get("logged_in") %}
-        <!-- ✅ Welcome username -->
-        <span class="welcome">Welcome, {{ session.get("username", "User") }}</span>
-
-        <!-- ✅ Role-based visibility in navbar -->
-        {% if session.get("role") == "admin" %}
-          <a href="{{ url_for('get_users') }}" class="{% if request.endpoint == 'get_users' %}active{% endif %}">Users</a>
-          <a href="{{ url_for('stats_page') }}" class="{% if request.endpoint == 'stats_page' %}active{% endif %}">Stats</a>
-        {% endif %}
-
-        <a href="{{ url_for('logout') }}" class="{% if request.endpoint == 'logout' %}active{% endif %}">Logout</a>
-      {% else %}
-        <a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">Login</a>
-      {% endif %}
-    </div>
+  <!-- Navbar -->
+<div class="navbar">
+  <div class="navbar-left">
+    <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">BasedDATA</a>
   </div>
+
+  <div class="navbar-right">
+    <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a>
+    <a href="{{ url_for('get_users') }}" class="{% if request.path.startswith('/users') %}active{% endif %}">Users</a>
+    <a href="{{ url_for('get_genres') }}" class="{% if request.path.startswith('/genres') %}active{% endif %}">Genres</a>
+    <a href="{{ url_for('get_artists') }}" class="{% if request.path.startswith('/artists') %}active{% endif %}">Artists</a>
+    <a href="{{ url_for('get_albums') }}" class="{% if request.path.startswith('/albums') %}active{% endif %}">Albums</a>
+    <a href="{{ url_for('get_tracks') }}" class="{% if request.path.startswith('/tracks') %}active{% endif %}">Tracks</a>
+    <a href="{{ url_for('get_audio_features') }}" class="{% if request.path.startswith('/audiofeatures') %}active{% endif %}">Audio</a>
+    <a href="{{ url_for('stats_page') }}" class="{% if request.path.startswith('/stats') %}active{% endif %}">Stats</a>
+
+    {% if session.get("logged_in") and session.get("role") == "admin" %}
+      <a href="{{ url_for('choose_add') }}" class="{% if request.path.startswith('/choose/add') %}active{% endif %}">Add</a>
+      <a href="{{ url_for('choose_edit') }}" class="{% if request.path.startswith('/choose/edit') %}active{% endif %}">Edit</a>
+    {% endif %}
+
+    {% if session.get("logged_in") %}
+      <span style="color:#1db954; margin-left:18px; font-weight:600;">
+       {{ session.get("username") }}
+      </span>
+      <a href="{{ url_for('logout') }}" style="margin-left:14px;">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">Login</a>
+    {% endif %}
+  </div>
+</div>
 
   <div class="page-wrap">
     {% block content %}{% endblock %}

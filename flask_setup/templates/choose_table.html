@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Choose Table{% endblock %}
+
+{% block content %}
+<div class="app-wrapper">
+  <section class="card card-large">
+    <h2>{{ title }}</h2>
+    <p class="subtitle">{{ subtitle }}</p>
+
+    <div class="button-grid">
+      {% for t in tables %}
+        <a class="pill-link" href="{{ t.url }}">{{ t.label }}</a>
+      {% endfor %}
+    </div>
+
+    <div style="margin-top:18px;">
+      <a class="btn secondary" href="{{ url_for('index') }}">Back to Home</a>
+    </div>
+  </section>
+
+  {% if hint %}
+    <section class="card">
+      <h3>How it works</h3>
+      <p>{{ hint }}</p>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}
