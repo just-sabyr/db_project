@@ -95,40 +95,42 @@ CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
 
 -- Load data from CSV files
 
-LOAD DATA LOCAL INFILE  'dataset_csv/genres.csv'
+LOAD DATA LOCAL INFILE 'dataset_csv/genres.csv'
 INTO TABLE Genres
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(parent_genre, genre_name, genre_description, genre_id);
+(parent_genre, genre_name, genre_description, @genre_id)
+SET genre_id = NULLIF(TRIM(@genre_id), '');
 
-LOAD DATA LOCAL INFILE  'dataset_csv/artists.csv'
+LOAD DATA LOCAL INFILE 'dataset_csv/artists.csv'
 IGNORE INTO TABLE Artists
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (artist_id, artist_name, artist_popularity, country, @genre_id)
-SET genre_id = NULLIF(@genre_id, '');
+SET genre_id = NULLIF(TRIM(@genre_id), '');
 
-LOAD DATA LOCAL INFILE  'dataset_csv/albums.csv'
+LOAD DATA LOCAL INFILE 'dataset_csv/albums.csv'
 INTO TABLE Albums
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(album_id,album_name,artist_id,genre_id,release_year,cover_url)
-SET genre_id = NULLIF(@genre_id, '');
+(album_id, album_name, artist_id, @genre_id, release_year, cover_url)
+SET genre_id = NULLIF(TRIM(@genre_id), '');
 
-LOAD DATA LOCAL INFILE  'dataset_csv/tracks.csv'
+LOAD DATA LOCAL INFILE 'dataset_csv/tracks.csv'
 INTO TABLE Tracks
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
-LINES TERMINATED BY '\n'    
+LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(track_id, track_name, album_id, artist_id, @genre_id, duration, explicit, popularity)
-SET genre_id = NULLIF(@genre_id, '');
+(track_id, track_name, album_id, @artist_id, @genre_id, duration, explicit, popularity)
+SET genre_id = NULLIF(TRIM(@genre_id), ''),
+    artist_id = NULLIF(TRIM(@artist_id), '');
 
 LOAD DATA LOCAL INFILE 'dataset_csv/audio_features.csv'
 INTO TABLE AudioFeatures
@@ -136,7 +138,9 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(track_id, danceability , energy , valence, tempo , loudness , acousticness);
+(track_id, danceability, energy, valence, tempo, loudness, acousticness);
+
+
 
 INSERT INTO Users (username, email, phone_number, dob, genre_id, artist_id) VALUES
 ('frenklin23', 'frenklin23@gmail.com', '+90682345678', '2000-05-12', 1, 62),
