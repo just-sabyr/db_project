@@ -4,7 +4,7 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 from functools import wraps
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 # import blueprints
 from code_files.genres import genres_bp
@@ -58,7 +58,7 @@ def create_app():
         return {"message": "Flask is running!"}
 
     @app.route("/stats")
-    @login_required
+    @role_required("admin")
     def stats_page():
         conn = get_db_connection()
         if conn is None:
@@ -185,9 +185,114 @@ def create_app():
         session.clear()
         flash("You have been logged out successfully.", "info")
         return redirect(url_for("index"))
-    
 
-        #  Chosse table pags for navbar Add/Edit
+    @app.route("/profile", methods=["GET", "POST"])
+    @login_required
+    def profile():
+        # Admin doesn't have a database profile
+        if session.get("role") == "admin":
+            flash("Admin account cannot be edited here.", "warning")
+            return redirect(url_for("index"))
+
+        user_id = session.get("user_id")
+        conn = get_db_connection()
+        if conn is None:
+            flash("Database connection failed.", "error")
+            return redirect(url_for("index"))
+
+        cursor = conn.cursor(dictionary=True)
+
+        # Get genres and artists for dropdowns
+        cursor.execute("SELECT genre_id, genre_name FROM Genres ORDER BY genre_name;")
+        genres = cursor.fetchall()
+        cursor.execute("SELECT artist_id, artist_name FROM Artists ORDER BY artist_name;")
+        artists = cursor.fetchall()
+
+        if request.method == "POST":
+            new_username = request.form.get("username", "").strip()
+            new_email = request.form.get("email", "").strip() or None
+            new_phone = request.form.get("phone_number", "").strip() or None
+            new_dob = request.form.get("dob", "").strip() or None
+            new_password = request.form.get("password", "").strip()
+            new_genre_id = request.form.get("genre_id") or None
+            new_artist_id = request.form.get("artist_id") or None
+
+            # Validation
+            errors = []
+            if not new_username:
+                errors.append("Username cannot be empty.")
+            if len(new_username) > 50:
+                errors.append("Username must be 50 characters or less.")
+            if new_phone and len(new_phone) > 13:
+                errors.append("Phone number must be 13 characters or less.")
+            if new_password and len(new_password) < 3:
+                errors.append("Password must be at least 3 characters.")
+
+            if errors:
+                for error in errors:
+                    flash(error, "error")
+            else:
+                try:
+                    # Build dynamic update query
+                    update_fields = []
+                    params = []
+
+                    update_fields.append("username = %s")
+                    params.append(new_username)
+
+                    update_fields.append("email = %s")
+                    params.append(new_email)
+
+                    update_fields.append("phone_number = %s")
+                    params.append(new_phone)
+
+                    update_fields.append("dob = %s")
+                    params.append(new_dob)
+
+                    update_fields.append("genre_id = %s")
+                    params.append(new_genre_id)
+
+                    update_fields.append("artist_id = %s")
+                    params.append(new_artist_id)
+
+                    # Only update password if provided
+                    if new_password:
+                        hashed_password = generate_password_hash(new_password)
+                        update_fields.append("password = %s")
+                        params.append(hashed_password)
+
+                    params.append(user_id)
+
+                    query = f"UPDATE Users SET {', '.join(update_fields)} WHERE user_id = %s"
+                    cursor.execute(query, tuple(params))
+                    conn.commit()
+
+                    session["username"] = new_username  # Update session
+                    flash("Profile updated successfully!", "success")
+
+                except mysql.connector.IntegrityError as e:
+                    if "username" in str(e).lower():
+                        flash("That username is already taken.", "error")
+                    elif "email" in str(e).lower() or "chk_users_email" in str(e).lower():
+                        flash("Invalid email format.", "error")
+                    else:
+                        flash(f"Update failed: {e}", "error")
+
+        # Fetch current user data
+        cursor.execute(
+            """SELECT user_id, username, email, phone_number, dob, genre_id, artist_id 
+               FROM Users WHERE user_id = %s""",
+            (user_id,)
+        )
+        user = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        return render_template("profile.html", user=user, genres=genres, artists=artists)
+
+
+    #  Chosse table pags for navbar Add/Edit
     @app.route("/choose/add")
     @role_required("admin")
     def choose_add():

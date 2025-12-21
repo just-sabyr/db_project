@@ -40,7 +40,9 @@
           {% if session.get("role") == "admin" %}
             👑 {{ session.get("username") }}
           {% else %}
-            👤 {{ session.get("username") }}
+            <a href="{{ url_for('profile') }}" class="{% if request.endpoint == 'profile' %}active{% endif %}">
+              👤 {{ session.get("username") }}
+            </a>
           {% endif %}
         </span>
         <a href="{{ url_for('logout') }}" style="margin-left:14px;">Logout</a>
@@ -48,6 +50,7 @@
         <span class="welcome">🕶️ Guest</span>
         <a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">Login</a>
       {% endif %}
+      
     </div>
   </div>
   

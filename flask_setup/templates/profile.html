@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2>My Profile</h2>
+
+  <form method="POST" action="{{ url_for('profile') }}">
+    <div class="form-group">
+      <label for="username">Username *</label>
+      <input 
+        type="text" 
+        id="username" 
+        name="username" 
+        value="{{ user.username }}" 
+        maxlength="50"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        value="{{ user.email or '' }}"
+        maxlength="100"
+        placeholder="example@email.com"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="phone_number">Phone Number</label>
+      <input 
+        type="text" 
+        id="phone_number" 
+        name="phone_number" 
+        value="{{ user.phone_number or '' }}"
+        maxlength="13"
+        placeholder="+123456789012"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="dob">Date of Birth</label>
+      <input 
+        type="date" 
+        id="dob" 
+        name="dob" 
+        value="{{ user.dob or '' }}"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="genre_id">Favorite Genre</label>
+      <select id="genre_id" name="genre_id">
+        <option value="">-- No preference --</option>
+        {% for genre in genres %}
+          <option value="{{ genre.genre_id }}" 
+            {% if user.genre_id == genre.genre_id %}selected{% endif %}>
+            {{ genre.genre_name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="artist_id">Favorite Artist</label>
+      <select id="artist_id" name="artist_id">
+        <option value="">-- No preference --</option>
+        {% for artist in artists %}
+          <option value="{{ artist.artist_id }}" 
+            {% if user.artist_id == artist.artist_id %}selected{% endif %}>
+            {{ artist.artist_name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <hr style="margin: 20px 0; border-color: #444;">
+
+    <div class="form-group">
+      <label for="password">New Password</label>
+      <input 
+        type="password" 
+        id="password" 
+        name="password"
+        placeholder="Leave blank to keep current password"
+        minlength="3"
+      >
+      <small style="color: #888;">Only fill this if you want to change your password</small>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+      <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
