@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Genres (                                 -- Sabyr
 
 -- Main tables
 CREATE TABLE IF NOT EXISTS Artists (                                -- Flavio
-    artist_id INT UNSIGNED PRIMARY KEY,
+    artist_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     artist_name VARCHAR(255) NOT NULL,
     artist_popularity INTEGER,
     country VARCHAR(100),
