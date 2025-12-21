@@ -254,3 +254,57 @@ body {
   color: white;
   border: 1px solid #c9302c;
 }
+
+
+
+/* Pagination start */
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination ul {
+  list-style: none;
+  padding: 0;
+  display: inline-flex;
+  gap: 5px;
+}
+
+.pagination li a,
+.pagination li span {
+  padding: 8px 12px;
+  border: 1px solid #282828;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #181818;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.pagination li a:hover {
+  background-color: #1db954;
+  color: #000000;
+  border-color: #1db954;
+}
+
+.pagination li.active span {
+  background-color: #1db954;
+  color: #000000;
+  border-color: #1db954;
+}
+
+.pagination li.disabled span {
+  color: #7a7a7a;
+  background-color: #121212;
+  border-color: #282828;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  text-align: center;
+  color: #b3b3b3;
+  margin-top: 10px;
+}
+
+/* Pagination end */

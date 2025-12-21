@@ -99,3 +99,25 @@ def get_tracks_list():
     cursor.close()
     conn.close()
     return tracks
+
+
+def paginate_query(cursor, base_query, count_query, params=(), page=1, per_page=10):
+    """
+    Helper function for pagination.
+    Returns: (rows, total_count, total_pages, current_page)
+    """
+    # Get total count
+    cursor.execute(count_query, params)
+    total_count = cursor.fetchone()["total"]
+    
+    # Calculate offset and total pages
+    total_pages = max(1, (total_count + per_page - 1) // per_page)
+    page = max(1, min(page, total_pages))
+    offset = (page - 1) * per_page
+    
+    # Get paginated results
+    paginated_query = f"{base_query} LIMIT %s OFFSET %s"
+    cursor.execute(paginated_query, params + (per_page, offset))
+    rows = cursor.fetchall()
+    
+    return rows, total_count, total_pages, page

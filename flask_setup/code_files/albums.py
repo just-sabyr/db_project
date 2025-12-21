@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify
 import mysql.connector
-from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, is_admin
+from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, is_admin, paginate_query
 
 albums_bp = Blueprint('albums', __name__)
 
@@ -32,9 +32,17 @@ def get_albums():
         return jsonify({"error": "Cannot connect to database"}), 500
 
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT album_id, album_name, release_year, artist_id, genre_id, cover_url FROM Albums LIMIT 20;")
-    rows = cursor.fetchall()
 
+    # Get page from query params, default to 1
+    page = request.args.get("page", 1, type=int)
+    per_page = 10  # Items per page
+    
+    base_query = "SELECT album_id, album_name, release_year, artist_id, genre_id, cover_url FROM Albums"
+    count_query = "SELECT COUNT(*) AS total FROM Albums"
+    
+    rows, total_count, total_pages, current_page = paginate_query(
+        cursor, base_query, count_query, page=page, per_page=per_page
+    )
     cursor.close()
     conn.close()
 
@@ -49,7 +57,11 @@ def get_albums():
         add_url=(url_for("albums.create_album") if is_admin() else None),
         edit_url_builder=(album_edit_url if is_admin() else None),
         delete_url_builder=(album_delete_url if is_admin() else None),
-        description=None
+        description=None,
+        # Pagination data
+        current_page=current_page,
+        total_pages=total_pages,
+        total_count=total_count
     )
 
 @albums_bp.route("/new", methods=["GET", "POST"])

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify, session
 import mysql.connector
-from .shared import get_db_connection, execute_safe_query, role_required, is_admin
+from .shared import get_db_connection, execute_safe_query, role_required, is_admin, paginate_query
 
 genres_bp = Blueprint('genres', __name__)
 
@@ -24,8 +24,17 @@ def get_genres():
         return jsonify({"error": "Cannot connect to database"}), 500
 
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT genre_id, parent_genre, genre_name, genre_description FROM Genres;")
-    rows = cursor.fetchall()
+    
+    # Get page from query params, default to 1
+    page = request.args.get("page", 1, type=int)
+    per_page = 10  # Items per page
+    
+    base_query = "SELECT genre_id, parent_genre, genre_name, genre_description FROM Genres"
+    count_query = "SELECT COUNT(*) AS total FROM Genres"
+    
+    rows, total_count, total_pages, current_page = paginate_query(
+        cursor, base_query, count_query, page=page, per_page=per_page
+    )
 
     cursor.close()
     conn.close()
@@ -41,7 +50,11 @@ def get_genres():
         add_url=(url_for("genres.create_genre") if is_admin() else None),
         edit_url_builder=(genre_edit_url if is_admin() else None),
         delete_url_builder=(genre_delete_url if is_admin() else None),
-        description=None
+        description=None,
+        # Pagination data
+        current_page=current_page,
+        total_pages=total_pages,
+        total_count=total_count
     )
 
 @genres_bp.route("/new", methods=["GET", "POST"])

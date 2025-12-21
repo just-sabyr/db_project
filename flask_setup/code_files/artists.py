@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify
 import mysql.connector
-from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, is_admin
+from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, is_admin, paginate_query
 
 artists_bp = Blueprint('artists', __name__)
 
@@ -21,6 +21,7 @@ def artist_edit_url(row):
 def artist_delete_url(row):
     return url_for("artists.delete_artist", artist_id=row["artist_id"])
 
+
 @artists_bp.route("/")
 def get_artists():
     conn = get_db_connection()
@@ -28,8 +29,17 @@ def get_artists():
         return jsonify({"error": "Cannot connect to database"}), 500
 
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT artist_id, artist_name, country, genre_id, artist_popularity FROM Artists LIMIT 20;")
-    rows = cursor.fetchall()
+    
+    # Get page from query params, default to 1
+    page = request.args.get("page", 1, type=int)
+    per_page = 10  # Items per page
+    
+    base_query = "SELECT artist_id, artist_name, country, genre_id, artist_popularity FROM Artists"
+    count_query = "SELECT COUNT(*) AS total FROM Artists"
+    
+    rows, total_count, total_pages, current_page = paginate_query(
+        cursor, base_query, count_query, page=page, per_page=per_page
+    )
 
     cursor.close()
     conn.close()
@@ -45,8 +55,13 @@ def get_artists():
         add_url=(url_for("artists.create_artist") if is_admin() else None),
         edit_url_builder=(artist_edit_url if is_admin() else None),
         delete_url_builder=(artist_delete_url if is_admin() else None),
-        description=None
+        description=None,
+        # Pagination data
+        current_page=current_page,
+        total_pages=total_pages,
+        total_count=total_count
     )
+
 
 @artists_bp.route("/new", methods=["GET", "POST"])
 @role_required("admin")
