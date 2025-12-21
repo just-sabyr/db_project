@@ -52,31 +52,48 @@ def get_genres_and_artists():
     return genres, artists
 
 def login_required(view_func):
+    """Requires any logged-in user (user or admin)"""
     @wraps(view_func)
     def wrapped(*args, **kwargs):
         if not session.get("logged_in"):
+            flash("Please log in to access this page.", "warning")
             return redirect(url_for("login"))
         return view_func(*args, **kwargs)
-
     return wrapped
 
+
 def role_required(*roles):
+    """Requires specific role(s)"""
     def decorator(view_func):
         @wraps(view_func)
         def wrapped(*args, **kwargs):
             if not session.get("logged_in"):
+                flash("Please log in to access this page.", "warning")
                 return redirect(url_for("login"))
 
             user_role = session.get("role")
             if user_role not in roles:
-                return "<h1>Permission Denied</h1><p>You do not have the required role to access this page.</p>", 403
+                flash("You do not have permission to access this page.", "error")
+                return redirect(url_for("index"))
 
             return view_func(*args, **kwargs)
         return wrapped
     return decorator
 
+
 def is_admin():
+    """Check if current user is admin"""
     return session.get("logged_in") and session.get("role") == "admin"
+
+def is_logged_in():
+    """Check if any user is logged in"""
+    return session.get("logged_in", False)
+
+def get_current_role():
+    """Returns 'admin', 'user', or 'guest'"""
+    if not session.get("logged_in"):
+        return "guest"
+    return session.get("role", "user")
 
 def get_albums_list():
     conn = get_db_connection()

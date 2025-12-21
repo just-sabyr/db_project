@@ -4,6 +4,7 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 from functools import wraps
+from werkzeug.security import check_password_hash
 
 # import blueprints
 from code_files.genres import genres_bp
@@ -143,6 +144,7 @@ def create_app():
             username = request.form.get("username", "").strip()
             password = request.form.get("password", "").strip()
 
+            # Check for admin first
             admin_user = os.getenv("ADMIN_USER", "admin")
             admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
 
@@ -150,9 +152,31 @@ def create_app():
                 session["logged_in"] = True
                 session["role"] = "admin"
                 session["username"] = "admin"
+                session["user_id"] = None
+                flash("Welcome, Admin!", "success")
                 return redirect(url_for("index"))
-            else:
-                error = "Invalid credentials. Please try again."
+
+            # Check database for regular users
+            conn = get_db_connection()
+            if conn:
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute(
+                    "SELECT user_id, username, password FROM Users WHERE username = %s",
+                    (username,)
+                )
+                user = cursor.fetchone()
+                cursor.close()
+                conn.close()
+
+                if user and check_password_hash(user["password"], password):
+                    session["logged_in"] = True
+                    session["role"] = "user"
+                    session["username"] = user["username"]
+                    session["user_id"] = user["user_id"]
+                    flash(f"Welcome back, {user['username']}!", "success")
+                    return redirect(url_for("index"))
+
+            error = "Invalid credentials. Please try again."
 
         return render_template("login.html", error=error)
 

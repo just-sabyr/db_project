@@ -81,7 +81,8 @@ CREATE TABLE IF NOT EXISTS AudioFeatures (                          -- Frenklin
 
 CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
     user_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
     email VARCHAR(100),                                             
     phone_number CHAR(13),                                          -- + and 12 numbers
     dob DATE,
@@ -143,31 +144,28 @@ IGNORE 1 ROWS
 (track_id, danceability, energy, valence, tempo, loudness, acousticness);
 
 
-
-INSERT INTO Users (username, email, phone_number, dob, genre_id, artist_id) VALUES
-('frenklin23', 'frenklin23@gmail.com', '+90682345678', '2000-05-12', 1, 62),
-('sabyrPM', 'projectmanager@yahoo.com', '+90694567890', '1999-11-03', 3, 5),
-('Favi', 'favi@gmail.com', '+90671234567', '2001-07-21', 2, 1),
-('ildo', 'ildoh@hotmail.com', '+905312345678', '1998-02-18', 4, 7),
-('amira_sound', 'amira.sound@outlook.com', '+90672220011', '2002-09-30', 6, NULL),
-('noah.dev', 'noah.dev@gmail.com', '+491712345678', '1997-03-05', 1, 3),
-('melisa2000', 'melisa2000@gmail.com', '+35688899900', '2000-12-14', 5, 4),
-('altin_rh', 'altin.rh@yahoo.com', '+35691234888', '1995-01-09', NULL, NULL),
-('julia_tunes', 'julia.tunes@gmail.com', '+55696666222', '2003-04-27', 2, 9),
-('genti_official', 'genti.official@gmail.com', '+55682998877', '1996-10-10', 8, 12),
-('mario_s', 'mario.s@gmail.com', '+393512345678', '1994-06-01', 4, NULL),
-('eva_star', 'eva.star@hotmail.com', '+35692340000', '2001-08-23', 7, 13),
-('lina_k', 'lina.k@yahoo.com', '+35675556677', '2002-03-14', 1, 5),
-('andrea_vibe', 'andrea.vibe@gmail.com', '+35682112233', '1998-12-31', 9, 6),
-('kevin_m', 'kevin.m@gmail.com', '+1 2025550199', '1997-04-17', 2, 10),
-('elira_x', 'elira.x@gmail.com', '+35683330055', '2000-11-20', 3, NULL),
-('ronaldo_plays', 'ronaldo.plays@gmail.com', '+35690099887', '1999-01-01', NULL, 4),
-('diana_live', 'diana.live@gmail.com', '+35694443210', '2003-09-15', 6, 8),
-('markosound', 'markosound@outlook.com', '+306944442211', '2002-02-02', 10, NULL),
-('sara_b', 'sara.b@gmail.com', '+90688812121', '1998-05-05', 5, 15);
-
-    
-    
+-- generate_users.py
+INSERT INTO Users (username, password, email, phone_number, dob, genre_id, artist_id) VALUES
+('frenklin23', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'frenklin23@gmail.com', '+90682345678', '2000-05-12', 1, 62),
+('sabyrPM', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'projectmanager@yahoo.com', '+90694567890', '1999-11-03', 3, 5),
+('Favi', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'favi@gmail.com', '+90671234567', '2001-07-21', 2, 1),
+('ildo', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'ildoh@hotmail.com', '+905312345678', '1998-02-18', 4, 7),
+('amira_sound', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'amira.sound@outlook.com', '+90672220011', '2002-09-30', 6, NULL),
+('noah.dev', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'noah.dev@gmail.com', '+491712345678', '1997-03-05', 1, 3),
+('melisa2000', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'melisa2000@gmail.com', '+35688899900', '2000-12-14', 5, 4),
+('altin_rh', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'altin.rh@yahoo.com', '+35691234888', '1995-01-09', NULL, NULL),
+('julia_tunes', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'julia.tunes@gmail.com', '+55696666222', '2003-04-27', 2, 9),
+('genti_official', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'genti.official@gmail.com', '+55682998877', '1996-10-10', 8, 12),
+('mario_s', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'mario.s@gmail.com', '+393512345678', '1994-06-01', 4, NULL),
+('eva_star', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'eva.star@hotmail.com', '+35692340000', '2001-08-23', 7, 13),
+('lina_k', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'lina.k@yahoo.com', '+35675556677', '2002-03-14', 1, 5),
+('andrea_vibe', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'andrea.vibe@gmail.com', '+35682112233', '1998-12-31', 9, 6),
+('kevin_m', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'kevin.m@gmail.com', '+1 2025550199', '1997-04-17', 2, 10),
+('elira_x', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'elira.x@gmail.com', '+35683330055', '2000-11-20', 3, NULL),
+('ronaldo_plays', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'ronaldo.plays@gmail.com', '+35690099887', '1999-01-01', NULL, 4),
+('diana_live', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'diana.live@gmail.com', '+35694443210', '2003-09-15', 6, 8),
+('markosound', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'markosound@outlook.com', '+306944442211', '2002-02-02', 10, NULL),
+('sara_b', 'scrypt:32768:8:1$leIQvoWvOsrUb3fR$d59d2fe16990fe100b67bfebed41cd2c273b419a2751f52bb23a97ff4905f1a6a9ca27b6a73210ee3e0a3458687e0fecb825a1d708078437f035ff42f68da761', 'sara.b@gmail.com', '+90688812121', '1998-05-05', 5, 15);
     
     
     

@@ -12,38 +12,56 @@
 <body>
 
   <!-- Navbar -->
-<div class="navbar">
-  <div class="navbar-left">
-    <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">BasedDATA</a>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+  <div class="navbar">
+    <div class="navbar-left">
+      <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">BasedDATA</a>
+      <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+    </div>
+  
+    <div class="navbar-right">
+      <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a>
+      <a href="{{ url_for('genres.get_genres') }}" class="{% if request.path.startswith('/genres') %}active{% endif %}">Genres</a>
+      <a href="{{ url_for('artists.get_artists') }}" class="{% if request.path.startswith('/artists') %}active{% endif %}">Artists</a>
+      <a href="{{ url_for('albums.get_albums') }}" class="{% if request.path.startswith('/albums') %}active{% endif %}">Albums</a>
+      <a href="{{ url_for('tracks.get_tracks') }}" class="{% if request.path.startswith('/tracks') %}active{% endif %}">Tracks</a>
+      <a href="{{ url_for('audiofeatures.get_audio_features') }}" class="{% if request.path.startswith('/audiofeatures') %}active{% endif %}">Audio</a>
+  
+      {# Admin-only links #}
+      {% if session.get("logged_in") and session.get("role") == "admin" %}
+        <a href="{{ url_for('users.get_users') }}" class="{% if request.path.startswith('/users') %}active{% endif %}">Users</a>
+        <a href="{{ url_for('stats_page') }}" class="{% if request.path.startswith('/stats') %}active{% endif %}">Stats</a>
+        <a href="{{ url_for('choose_add') }}" class="{% if request.path.startswith('/choose/add') %}active{% endif %}">Add</a>
+        <a href="{{ url_for('choose_edit') }}" class="{% if request.path.startswith('/choose/edit') %}active{% endif %}">Edit</a>
+      {% endif %}
+  
+      {# User info and auth links #}
+      {% if session.get("logged_in") %}
+        <span class="welcome">
+          {% if session.get("role") == "admin" %}
+            👑 {{ session.get("username") }}
+          {% else %}
+            👤 {{ session.get("username") }}
+          {% endif %}
+        </span>
+        <a href="{{ url_for('logout') }}" style="margin-left:14px;">Logout</a>
+      {% else %}
+        <span class="welcome">🕶️ Guest</span>
+        <a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">Login</a>
+      {% endif %}
+    </div>
   </div>
-
-  <div class="navbar-right">
-    <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a>
-    <a href="{{ url_for('genres.get_genres') }}" class="{% if request.path.startswith('/genres') %}active{% endif %}">Genres</a>
-    <a href="{{ url_for('artists.get_artists') }}" class="{% if request.path.startswith('/artists') %}active{% endif %}">Artists</a>
-    <a href="{{ url_for('albums.get_albums') }}" class="{% if request.path.startswith('/albums') %}active{% endif %}">Albums</a>
-    <a href="{{ url_for('tracks.get_tracks') }}" class="{% if request.path.startswith('/tracks') %}active{% endif %}">Tracks</a>
-    <a href="{{ url_for('audiofeatures.get_audio_features') }}" class="{% if request.path.startswith('/audiofeatures') %}active{% endif %}">Audio</a>
-
-    {% if session.get("logged_in") and session.get("role") == "admin" %}
-      <a href="{{ url_for('users.get_users') }}" class="{% if request.path.startswith('/users') %}active{% endif %}">Users</a>
-      <a href="{{ url_for('stats_page') }}" class="{% if request.path.startswith('/stats') %}active{% endif %}">Stats</a>
-      <a href="{{ url_for('choose_add') }}" class="{% if request.path.startswith('/choose/add') %}active{% endif %}">Add</a>
-      <a href="{{ url_for('choose_edit') }}" class="{% if request.path.startswith('/choose/edit') %}active{% endif %}">Edit</a>
-    {% endif %}
-
-    {% if session.get("logged_in") %}
-      <span class="welcome">
-       Welcome {{ session.get("username") }}
-      </span>
-      <a href="{{ url_for('logout') }}" style="margin-left:14px;">Logout</a>
-    {% else %}
-      <a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">Login</a>
-    {% endif %}
+  
+  {# Flash messages #}
+  <div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
   </div>
-</div>
-
+  
   <div class="page-wrap">
     {% block content %}{% endblock %}
   </div>
