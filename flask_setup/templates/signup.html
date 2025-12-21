@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up | Spotify DB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+</head>
+
+<body class="user-form-page">
+<div class="user-form-container">
+
+<header class="user-form-header">
+    <a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
+    <h1>Create Account</h1>
+    <p class="subtitle">Create a new user account.</p>
+</header>
+
+<section class="user-form-card">
+
+    {% if error %}
+        <div class="error-box">{{ error }}</div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="success-box">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" class="user-form-grid">
+
+        <div class="form-row">
+            <label for="username">Username</label>
+            <input
+                id="username"
+                type="text"
+                name="username"
+                required>
+        </div>
+
+        <div class="form-row">
+            <label for="email">Email (optional)</label>
+            <input
+                id="email"
+                type="email"
+                name="email">
+        </div>
+
+        <div class="form-row">
+            <label for="password">Password</label>
+            <input
+                id="password"
+                type="password"
+                name="password"
+                required>
+        </div>
+
+        <div class="form-row form-row-full">
+            <button type="submit" class="btn primary-btn">Sign up</button>
+        </div>
+
+    </form>
+
+    <p class="form-footer">
+        Already have an account?
+        <a href="{{ url_for('login') }}">Log in</a>
+    </p>
+
+</section>
+
+</div>
+</body>
+</html>
