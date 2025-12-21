@@ -179,7 +179,7 @@ def create_app():
             title="Add record",
             subtitle="Choose which table you want to add a new record to:",
             tables=tables,
-            hint=None
+            hint="After you open the table list, click the Add button on the row you want."
         )
 
     @app.route("/choose/edit")

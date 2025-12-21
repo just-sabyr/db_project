@@ -7,8 +7,8 @@
 }
 
 body {
-  background-color: #121212;
-  color: #ffffff;
+  background-color: #f3f4f6;
+  color: #1f2937;
   min-height: 100vh;
 }
 
@@ -28,7 +28,7 @@ body {
 }
 
 .subtitle {
-  color: #b3b3b3;
+  color: #6b7280;
 }
 
 .app-main {
@@ -38,11 +38,11 @@ body {
 }
 
 .card {
-  background-color: #181818;
+  background-color: #ffffff;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  border: 1px solid #282828;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .card h2 {
@@ -50,11 +50,10 @@ body {
 }
 
 .card p {
-  color: #d1d1d1;
+  color: #4b5563;
 }
 
 .button-grid {
-  /* buttons */
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -76,20 +75,15 @@ body {
   color: #000000;
 }
 
-.btn {
-  background-color: #1db954;
-  color: #000000;
-}
-
 .btn:hover {
   background-color: #1ed760;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .btn.secondary {
   background-color: transparent;
-  color: #ffffff;
+  color: #1f2937;
   border: 1px solid #1db954;
 }
 
@@ -101,7 +95,7 @@ body {
 .app-footer {
   margin-top: 2rem;
   text-align: center;
-  color: #7a7a7a;
+  color: #6b7280;
   font-size: 0.85rem;
 }
 
@@ -116,7 +110,7 @@ body {
   border: 1px solid #1db954;
   text-decoration: none;
   font-size: 0.9rem;
-  color: #ffffff;
+  color: #1f2937;
   transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
@@ -133,7 +127,7 @@ body {
 
 .info-list li {
   margin-bottom: 0.4rem;
-  color: #d1d1d1;
+  color: #4b5563;
 }
 
 @media (min-width: 768px) {
@@ -148,7 +142,7 @@ body {
 
 /* Navbar */
 .navbar {
-  background-color: #1f2937;
+  background-color: #e5e7eb;
   padding: 14px 30px;
   display: flex;
   justify-content: space-between;
@@ -156,7 +150,7 @@ body {
 }
 
 .navbar a {
-  color: white;
+  color: #1f2937;
   text-decoration: none;
   margin-left: 18px;
   font-weight: 500;
@@ -193,8 +187,8 @@ body {
 }
 
 .theme-toggle {
-  background-color: #374151;
-  color: white;
+  background-color: #d1d5db;
+  color: #1f2937;
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
@@ -205,7 +199,7 @@ body {
 }
 
 .theme-toggle:hover {
-  background-color: #4b5563;
+  background-color: #9ca3af;
 }
 
 .welcome {

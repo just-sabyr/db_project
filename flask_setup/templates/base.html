@@ -4,48 +4,7 @@
   <meta charset="UTF-8" />
   <title>{% block title %}Spotify Database Dashboard{% endblock %}</title>
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
-  <style>
-    .navbar {
-      background-color: #1f2937;
-      padding: 14px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .navbar a {
-      color: white;
-      text-decoration: none;
-      margin-left: 18px;
-      font-weight: 500;
-      opacity: 0.85;
-    }
-
-    .navbar a:hover { opacity: 1; text-decoration: underline; }
-
-    /* ✅ Active page highlight */
-    .navbar a.active {
-      opacity: 1;
-      text-decoration: underline;
-      font-weight: 700;
-    }
-
-    .navbar-left a { margin-left: 0; font-weight: 800; opacity: 1; }
-    .navbar-right { display: flex; align-items: center; gap: 6px; }
-
-    /* ✅ Welcome username */
-    .welcome {
-      color: #d1d5db;
-      margin-left: 18px;
-      font-weight: 600;
-      opacity: 0.95;
-      white-space: nowrap;
-    }
-
-    .page-wrap { padding: 30px; }
-  </style>
+  <link id="theme-css" rel="stylesheet" href="{{ url_for('static', filename='dark_mode.css') }}">
 
   {% block extra_css %} {% endblock %}
 </head>
@@ -56,11 +15,12 @@
 <div class="navbar">
   <div class="navbar-left">
     <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">BasedDATA</a>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
   </div>
 
   <div class="navbar-right">
     <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a>
-       <a href="{{ url_for('genres.get_genres') }}" class="{% if request.path.startswith('/genres') %}active{% endif %}">Genres</a>
+    <a href="{{ url_for('genres.get_genres') }}" class="{% if request.path.startswith('/genres') %}active{% endif %}">Genres</a>
     <a href="{{ url_for('artists.get_artists') }}" class="{% if request.path.startswith('/artists') %}active{% endif %}">Artists</a>
     <a href="{{ url_for('albums.get_albums') }}" class="{% if request.path.startswith('/albums') %}active{% endif %}">Albums</a>
     <a href="{{ url_for('tracks.get_tracks') }}" class="{% if request.path.startswith('/tracks') %}active{% endif %}">Tracks</a>
@@ -74,8 +34,8 @@
     {% endif %}
 
     {% if session.get("logged_in") %}
-      <span style="color:#1db954; margin-left:18px; font-weight:600;">
-       {{ session.get("username") }}
+      <span class="welcome">
+       Welcome {{ session.get("username") }}
       </span>
       <a href="{{ url_for('logout') }}" style="margin-left:14px;">Logout</a>
     {% else %}
@@ -87,6 +47,39 @@
   <div class="page-wrap">
     {% block content %}{% endblock %}
   </div>
+
+  <script>
+    function toggleTheme() {
+      const btn = document.querySelector('.theme-toggle');
+      const themeCss = document.getElementById('theme-css');
+      const statsCss = document.getElementById('stats-theme-css');
+      const isLight = themeCss.href.includes('light_mode');
+      
+      if (isLight) {
+        btn.textContent = '🌙 Dark';
+        themeCss.href = "{{ url_for('static', filename='dark_mode.css') }}";
+        if (statsCss) statsCss.href = "{{ url_for('static', filename='stats_dark.css') }}";
+        localStorage.setItem('theme', 'dark');
+      } else {
+        btn.textContent = '☀️ Light';
+        themeCss.href = "{{ url_for('static', filename='light_mode.css') }}";
+        if (statsCss) statsCss.href = "{{ url_for('static', filename='stats_light.css') }}";
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // Load saved theme on page load
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const btn = document.querySelector('.theme-toggle');
+      const themeCss = document.getElementById('theme-css');
+      
+      if (savedTheme === 'light') {
+        btn.textContent = '☀️ Light';
+        themeCss.href = "{{ url_for('static', filename='light_mode.css') }}";
+      }
+    })();
+  </script>
 
 </body>
 </html>
