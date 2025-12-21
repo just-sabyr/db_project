@@ -4,14 +4,12 @@ from .shared import get_db_connection, execute_safe_query, role_required, get_ge
 
 albums_bp = Blueprint('albums', __name__)
 
-def build_album_fields(genres, artists):
+def build_album_fields(genres):
+    """Build fields for album form - artist uses search, not select"""
     return [
-        {"name": "album_name", "label": "Album Name", "type": "text"},
+        {"name": "album_name", "label": "Album Name", "type": "text", "required": True},
         {"name": "release_year", "label": "Release Year", "type": "text"},
-        {
-            "name": "artist_id", "label": "Artist", "type": "select",
-            "options": [{"value": a["artist_id"], "text": a["artist_name"]} for a in artists]
-        },
+        {"name": "artist_id", "label": "Artist", "type": "artist_search"},  # Changed to search
         {
             "name": "genre_id", "label": "Genre", "type": "select",
             "options": [{"value": g["genre_id"], "text": g["genre_name"]} for g in genres]
@@ -67,8 +65,8 @@ def get_albums():
 @albums_bp.route("/new", methods=["GET", "POST"])
 @role_required("admin")
 def create_album():
-    genres, artists = get_genres_and_artists()
-    fields = build_album_fields(genres, artists)
+    genres, _ = get_genres_and_artists()  # Don't need artists list anymore
+    fields = build_album_fields(genres)
 
     if request.method == "POST":
         album_name = request.form.get("album_name")
@@ -105,6 +103,7 @@ def create_album():
         error_message=None
     )
 
+
 @albums_bp.route("/<int:album_id>/edit", methods=["GET", "POST"])
 @role_required("admin")
 def edit_album(album_id):
@@ -116,14 +115,27 @@ def edit_album(album_id):
     cursor.execute("SELECT * FROM Albums WHERE album_id = %s;", (album_id,))
     album = cursor.fetchone()
 
+    if not album:
+        cursor.close()
+        conn.close()
+        return redirect(url_for("albums.get_albums"))
+
+    # Get current artist name for search input
+    current_artist_name = None
+    if album.get("artist_id"):
+        cursor.execute(
+            "SELECT artist_name FROM Artists WHERE artist_id = %s",
+            (album["artist_id"],)
+        )
+        artist = cursor.fetchone()
+        if artist:
+            current_artist_name = artist["artist_name"]
+
     cursor.close()
     conn.close()
 
-    if not album:
-        return redirect(url_for("albums.get_albums"))
-
-    genres, artists = get_genres_and_artists()
-    fields = build_album_fields(genres, artists)
+    genres, _ = get_genres_and_artists()  # Don't need artists list anymore
+    fields = build_album_fields(genres)
 
     if request.method == "POST":
         album_name = request.form.get("album_name")
@@ -131,7 +143,6 @@ def edit_album(album_id):
         artist_id = request.form.get("artist_id") or None
         genre_id = request.form.get("genre_id") or None
         cover_url = request.form.get("cover_url") or None
-
         query = """
             UPDATE Albums
             SET album_name = %s,
@@ -158,6 +169,7 @@ def edit_album(album_id):
                     "genre_id": genre_id,
                     "cover_url": cover_url,
                 },
+                current_artist_name=current_artist_name,
                 cancel_url=url_for("albums.get_albums"),
                 error_message=error
             )
@@ -170,6 +182,7 @@ def edit_album(album_id):
         subtitle=f"Editing album_id = {album_id}",
         fields=fields,
         values=album,
+        current_artist_name=current_artist_name,
         cancel_url=url_for("albums.get_albums"),
         error_message=None
     )

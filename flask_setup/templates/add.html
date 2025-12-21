@@ -1,45 +1,246 @@
 {% extends "base.html" %}
-{% block title %}Add - {{ title }}{% endblock %}
+
+{% block title %}Add {{ title }}{% endblock %}
 
 {% block content %}
-<div class="app-wrapper">
-  <header class="app-header">
-    <h1>Add {{ title }}</h1>
-    {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
-  </header>
+<div class="form-container">
+  <h2>Add {{ title }}</h2>
+  {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
 
-  <section class="card">
-    {% if error_message %}
-      <p style="color:#ff8080; font-weight:600;">{{ error_message }}</p>
-    {% endif %}
+  {% if error_message %}
+    <div class="flash flash-error">{{ error_message }}</div>
+  {% endif %}
 
-    <form method="post">
-      {% for field in fields %}
-        <div style="margin-bottom:14px;">
-          <label style="display:block; margin-bottom:6px; font-weight:600;">{{ field.label }}</label>
+  <form method="POST">
+    {% for field in fields %}
+      <div class="form-group">
+        <label for="{{ field.name }}">{{ field.label }}{% if field.required %} *{% endif %}</label>
 
-          {% if field.type == "select" %}
-            <select name="{{ field.name }}" class="pill-link" style="width:100%; padding:10px;">
-              <option value="">-- none --</option>
-              {% for opt in field.options %}
-                <option value="{{ opt.value }}">{{ opt.text }}</option>
-              {% endfor %}
-            </select>
+        {% if field.type == "select" %}
+          <select id="{{ field.name }}" name="{{ field.name }}">
+            <option value="">-- Select --</option>
+            {% for opt in field.options %}
+              <option value="{{ opt.value }}">{{ opt.text }}</option>
+            {% endfor %}
+          </select>
 
-          {% elif field.type == "date" %}
-            <input type="date" name="{{ field.name }}" style="width:100%; padding:10px;" />
+        {% elif field.type == "artist_search" %}
+          <div class="autocomplete-container">
+            <input 
+              type="text" 
+              id="artist_search" 
+              placeholder="Search for an artist..."
+              value="{{ current_artist_name or '' }}"
+              autocomplete="off"
+            >
+            <input type="hidden" id="artist_id" name="artist_id" value="">
+            <div id="artist-results" class="autocomplete-results"></div>
+            <button type="button" id="clear-artist" class="btn-clear" title="Clear selection">&times;</button>
+          </div>
 
-          {% else %}
-            <input type="text" name="{{ field.name }}" style="width:100%; padding:10px;" />
-          {% endif %}
-        </div>
-      {% endfor %}
+        {% elif field.type == "textarea" %}
+          <textarea id="{{ field.name }}" name="{{ field.name }}" rows="4"></textarea>
 
-      <div style="display:flex; gap:10px;">
-        <button class="btn" type="submit">Save</button>
-        <a class="btn secondary" href="{{ cancel_url }}">Cancel</a>
+        {% else %}
+          <input 
+            type="{{ field.type }}" 
+            id="{{ field.name }}" 
+            name="{{ field.name }}"
+            {% if field.required %}required{% endif %}
+          >
+        {% endif %}
       </div>
-    </form>
-  </section>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Create</button>
+      <a href="{{ cancel_url }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
 </div>
+
+<style>
+  .autocomplete-container {
+    position: relative;
+  }
+
+  .autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+  }
+
+  .autocomplete-results.show {
+    display: block;
+  }
+
+  .autocomplete-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+  }
+
+  .autocomplete-item:last-child {
+    border-bottom: none;
+  }
+
+  .autocomplete-item:hover,
+  .autocomplete-item.active {
+    background: #1db954;
+    color: white;
+  }
+
+  .autocomplete-item .artist-name {
+    font-weight: 500;
+  }
+
+  .autocomplete-item .artist-country {
+    font-size: 0.85em;
+    color: #888;
+  }
+
+  .autocomplete-item:hover .artist-country,
+  .autocomplete-item.active .artist-country {
+    color: #ddd;
+  }
+
+  .btn-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
+  .btn-clear:hover {
+    color: #e74c3c;
+  }
+
+  #artist_search {
+    padding-right: 35px;
+    width: 100%;
+  }
+
+  .no-results {
+    padding: 10px 12px;
+    color: #888;
+    font-style: italic;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('artist_search');
+    if (!searchInput) return;  // Exit if no artist search field
+
+    const artistIdInput = document.getElementById('artist_id');
+    const resultsContainer = document.getElementById('artist-results');
+    const clearBtn = document.getElementById('clear-artist');
+    let debounceTimer;
+    let activeIndex = -1;
+
+    searchInput.addEventListener('input', function() {
+      const query = this.value.trim();
+      
+      clearTimeout(debounceTimer);
+      
+      if (query.length < 2) {
+        resultsContainer.classList.remove('show');
+        return;
+      }
+
+      debounceTimer = setTimeout(() => {
+        fetch(`/artists/search?q=${encodeURIComponent(query)}&limit=10`)
+          .then(response => response.json())
+          .then(data => {
+            resultsContainer.innerHTML = '';
+            activeIndex = -1;
+
+            if (data.artists && data.artists.length > 0) {
+              data.artists.forEach((artist, index) => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.dataset.id = artist.artist_id;
+                item.dataset.name = artist.artist_name;
+                item.innerHTML = `
+                  <span class="artist-name">${artist.artist_name}</span>
+                  ${artist.country ? `<span class="artist-country"> - ${artist.country}</span>` : ''}
+                `;
+                item.addEventListener('click', () => selectArtist(artist));
+                resultsContainer.appendChild(item);
+              });
+            } else {
+              resultsContainer.innerHTML = '<div class="no-results">No artists found</div>';
+            }
+
+            resultsContainer.classList.add('show');
+          })
+          .catch(err => console.error('Search error:', err));
+      }, 300);
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+      const items = resultsContainer.querySelectorAll('.autocomplete-item');
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = Math.min(activeIndex + 1, items.length - 1);
+        updateActiveItem(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = Math.max(activeIndex - 1, 0);
+        updateActiveItem(items);
+      } else if (e.key === 'Enter' && activeIndex >= 0) {
+        e.preventDefault();
+        const activeItem = items[activeIndex];
+        if (activeItem) {
+          selectArtist({
+            artist_id: activeItem.dataset.id,
+            artist_name: activeItem.dataset.name
+          });
+        }
+      } else if (e.key === 'Escape') {
+        resultsContainer.classList.remove('show');
+      }
+    });
+
+    function updateActiveItem(items) {
+      items.forEach((item, index) => {
+        item.classList.toggle('active', index === activeIndex);
+      });
+    }
+
+    function selectArtist(artist) {
+      searchInput.value = artist.artist_name;
+      artistIdInput.value = artist.artist_id;
+      resultsContainer.classList.remove('show');
+    }
+
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      artistIdInput.value = '';
+      resultsContainer.classList.remove('show');
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+        resultsContainer.classList.remove('show');
+      }
+    });
+  });
+</script>
 {% endblock %}

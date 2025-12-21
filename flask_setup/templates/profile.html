@@ -67,16 +67,19 @@
     </div>
 
     <div class="form-group">
-      <label for="artist_id">Favorite Artist</label>
-      <select id="artist_id" name="artist_id">
-        <option value="">-- No preference --</option>
-        {% for artist in artists %}
-          <option value="{{ artist.artist_id }}" 
-            {% if user.artist_id == artist.artist_id %}selected{% endif %}>
-            {{ artist.artist_name }}
-          </option>
-        {% endfor %}
-      </select>
+      <label for="artist_search">Favorite Artist</label>
+        <div class="autocomplete-container">
+          <input 
+          type="text" 
+          id="artist_search" 
+          placeholder="Search for an artist..."
+          value="{{ current_artist_name or '' }}"
+          autocomplete="off"
+          >
+          <input type="hidden" id="artist_id" name="artist_id" value="{{ user.artist_id or '' }}">
+          <div id="artist-results" class="autocomplete-results"></div>
+          <button type="button" id="clear-artist" class="btn-clear" title="Clear selection">&times;</button>
+      </div>
     </div>
 
     <hr style="margin: 20px 0; border-color: #444;">
@@ -99,4 +102,203 @@
     </div>
   </form>
 </div>
+
+
+<style>
+  .autocomplete-container {
+    position: relative;
+  }
+
+  .autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+  }
+
+  .autocomplete-results.show {
+    display: block;
+  }
+
+  .autocomplete-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+  }
+
+  .autocomplete-item:last-child {
+    border-bottom: none;
+  }
+
+  .autocomplete-item:hover,
+  .autocomplete-item.active {
+    background: #1db954;
+    color: white;
+  }
+
+  .autocomplete-item .artist-name {
+    font-weight: 500;
+  }
+  .autocomplete-item .artist-country {
+    font-size: 0.85em;
+    color: #888;
+  }
+
+  .autocomplete-item:hover .artist-country,
+  .autocomplete-item.active .artist-country {
+    color: #ddd;
+  }
+
+  .btn-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
+  .btn-clear:hover {
+    color: #e74c3c;
+  }
+
+  #artist_search {
+    padding-right: 35px;
+  }
+
+  .no-results {
+    padding: 10px 12px;
+    color: #888;
+    font-style: italic;
+  }
+</style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('artist_search');
+    const artistIdInput = document.getElementById('artist_id');
+    const resultsContainer = document.getElementById('artist-results');
+    const clearBtn = document.getElementById('clear-artist');
+    let debounceTimer;
+    let activeIndex = -1;
+
+    // Search artists as user types
+    searchInput.addEventListener('input', function() {
+      const query = this.value.trim();
+      
+      clearTimeout(debounceTimer);
+      
+      if (query.length < 2) {
+        resultsContainer.classList.remove('show');
+        return;
+      }
+
+      debounceTimer = setTimeout(() => {
+        fetch(`/artists/search?q=${encodeURIComponent(query)}&limit=10`)
+          .then(response => response.json())
+          .then(data => {
+            resultsContainer.innerHTML = '';
+            activeIndex = -1;
+
+            if (data.artists && data.artists.length > 0) {
+              data.artists.forEach((artist, index) => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.dataset.id = artist.artist_id;
+                item.dataset.name = artist.artist_name;
+                item.innerHTML = `
+                  <span class="artist-name">${artist.artist_name}</span>
+                  ${artist.country ? `<span class="artist-country"> - ${artist.country}</span>` : ''}
+                `;
+                item.addEventListener('click', () => selectArtist(artist));
+                resultsContainer.appendChild(item);
+              });
+            } else {
+              resultsContainer.innerHTML = '<div class="no-results">No artists found</div>';
+            }
+            resultsContainer.classList.add('show');
+          })
+          .catch(err => {
+            console.error('Search error:', err);
+          });
+      }, 300);
+    });
+
+    // Keyboard navigation
+    searchInput.addEventListener('keydown', function(e) {
+      const items = resultsContainer.querySelectorAll('.autocomplete-item');
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = Math.min(activeIndex + 1, items.length - 1);
+        updateActiveItem(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = Math.max(activeIndex - 1, 0);
+        updateActiveItem(items);
+      } else if (e.key === 'Enter' && activeIndex >= 0) {
+        e.preventDefault();
+        const activeItem = items[activeIndex];
+        if (activeItem) {
+          selectArtist({
+            artist_id: activeItem.dataset.id,
+            artist_name: activeItem.dataset.name
+          });
+        }
+      } else if (e.key === 'Escape') {
+        resultsContainer.classList.remove('show');
+      }
+    });
+
+    function updateActiveItem(items) {
+      items.forEach((item, index) => {
+        item.classList.toggle('active', index === activeIndex);
+      });
+    }
+
+    function selectArtist(artist) {
+      searchInput.value = artist.artist_name;
+      artistIdInput.value = artist.artist_id;
+      resultsContainer.classList.remove('show');
+    }
+
+    // Clear button
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      artistIdInput.value = '';
+      resultsContainer.classList.remove('show');
+    });
+
+    // Close results when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+        resultsContainer.classList.remove('show');
+      }
+    });
+  });
+</script>
+
 {% endblock %}
+
+
+
+
+
+
+
+
+
+

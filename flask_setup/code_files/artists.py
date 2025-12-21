@@ -179,3 +179,31 @@ def delete_artist(artist_id):
         return jsonify({"error": error}), 500
 
     return redirect(url_for("artists.get_artists"))
+
+@artists_bp.route("/search")
+def search_artists():
+    """Search artists by name - returns JSON for autocomplete"""
+    query = request.args.get("q", "").strip()
+    limit = request.args.get("limit", 10, type=int)
+    
+    if len(query) < 2:
+        return jsonify({"artists": []})
+    
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({"error": "Database connection failed"}), 500
+    
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        """SELECT artist_id, artist_name, country 
+           FROM Artists 
+           WHERE artist_name LIKE %s 
+           ORDER BY artist_popularity DESC, artist_name ASC
+           LIMIT %s""",
+        (f"%{query}%", limit)
+    )
+    artists = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    return jsonify({"artists": artists})

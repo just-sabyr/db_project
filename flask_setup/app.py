@@ -186,6 +186,7 @@ def create_app():
         flash("You have been logged out successfully.", "info")
         return redirect(url_for("index"))
 
+
     @app.route("/profile", methods=["GET", "POST"])
     @login_required
     def profile():
@@ -202,11 +203,10 @@ def create_app():
 
         cursor = conn.cursor(dictionary=True)
 
-        # Get genres and artists for dropdowns
+        # Get genres for dropdown (small table, ok to fetch all)
         cursor.execute("SELECT genre_id, genre_name FROM Genres ORDER BY genre_name;")
         genres = cursor.fetchall()
-        cursor.execute("SELECT artist_id, artist_name FROM Artists ORDER BY artist_name;")
-        artists = cursor.fetchall()
+        # Removed: artists query - now using search autocomplete instead
 
         if request.method == "POST":
             new_username = request.form.get("username", "").strip()
@@ -286,11 +286,21 @@ def create_app():
         )
         user = cursor.fetchone()
 
+        # Get current artist name for display in search input
+        current_artist_name = None
+        if user and user.get("artist_id"):
+            cursor.execute(
+                "SELECT artist_name FROM Artists WHERE artist_id = %s",
+                (user["artist_id"],)
+            )
+            artist = cursor.fetchone()
+            if artist:
+                current_artist_name = artist["artist_name"]
+
         cursor.close()
         conn.close()
 
-        return render_template("profile.html", user=user, genres=genres, artists=artists)
-
+        return render_template("profile.html", user=user, genres=genres, current_artist_name=current_artist_name)
 
     #  Chosse table pags for navbar Add/Edit
     @app.route("/choose/add")
