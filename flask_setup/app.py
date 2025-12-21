@@ -199,24 +199,7 @@ def create_app():
             subtitle="Choose a table, then click Edit on the row you want to update:",
             tables=tables,
             hint="After you open the table list, click the Edit button on the row you want."
-        )    @app.route("/choose/edit")
-    @role_required("admin")
-    def choose_edit():
-        tables = [
-            {"label": "Genres", "url": url_for("genres.get_genres")},
-            {"label": "Artists", "url": url_for("artists.get_artists")},
-            {"label": "Albums", "url": url_for("albums.get_albums")},
-            {"label": "Tracks", "url": url_for("tracks.get_tracks")},
-            {"label": "Audio Features", "url": url_for("audiofeatures.get_audio_features")},
-            {"label": "Users", "url": url_for("users.get_users")},
-        ]
-        return render_template(
-            "choose_table.html",
-            title="Edit record",
-            subtitle="Choose a table, then click Edit on the row you want to update:",
-            tables=tables,
-            hint="After you open the table list, click the Edit button on the row you want."
-        )
+        )    
 
     return app
 

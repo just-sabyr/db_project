@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Statistics – Spotify DB</title>
+{% extends "base.html" %}
+
+{% block title %} Statistics - Spotify DB {% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 <div class="stats-page">
-
-    <a href="/" class="back-link">← Back to Home</a>
-
     <h1>Database statistics</h1>
     <p class="subtitle">
         Overview of users, artists, albums, tracks and favourite genres.
@@ -121,5 +119,4 @@
     </section>
 
 </div>
-</body>
-</html>
+{% endblock %}

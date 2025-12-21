@@ -24,7 +24,7 @@
             <select name="{{ field.name }}" class="pill-link" style="width:100%; padding:10px;">
               <option value="">-- none --</option>
               {% for opt in field.options %}
-                <option value="{{ opt.value }}" {% if opt.value|string = current|string %}selected{% endif %}>
+                <option value="{{ opt.value }}" {% if opt.value|string == current|string %}selected{% endif %}>
                   {{ opt.text }}
                 </option>
               {% endfor %}
