@@ -12,8 +12,10 @@ from code_files.artists import artists_bp
 from code_files.albums import albums_bp
 from code_files.tracks import tracks_bp
 from code_files.audiofeatures import audiofeatures_bp
+from code_files.favorites import favorites_bp
 from code_files.users import users_bp
 from code_files.shared import get_db_connection, login_required, role_required
+
 
 # load the variables from the .env file 
 load_dotenv()
@@ -38,6 +40,7 @@ def create_app():
     app.register_blueprint(tracks_bp, url_prefix='/tracks')
     app.register_blueprint(audiofeatures_bp, url_prefix='/audiofeatures')
     app.register_blueprint(users_bp, url_prefix='/users')
+    app.register_blueprint(favorites_bp, url_prefix='/favorites')  
 
 
     @app.route("/debug/templates")

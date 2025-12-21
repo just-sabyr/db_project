@@ -43,6 +43,9 @@
             <a href="{{ url_for('profile') }}" class="{% if request.endpoint == 'profile' %}active{% endif %}">
               👤 {{ session.get("username") }}
             </a>
+            <a href="{{ url_for('favorites.list_favorite_tracks') }}" class="{% if request.path == '/favorites/tracks' %}active{% endif %}"> ❤️ Tracks</a>
+            <a href="{{ url_for('favorites.list_favorite_artists') }}" class="{% if request.path == '/favorites/artists' %}active{% endif %}"> ❤️ Artists</a>
+       
           {% endif %}
         </span>
         <a href="{{ url_for('logout') }}" style="margin-left:14px;">Logout</a>

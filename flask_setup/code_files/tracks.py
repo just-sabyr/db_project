@@ -272,3 +272,33 @@ def delete_track(track_id):
 
     return redirect(url_for("tracks.get_tracks"))
     
+
+@tracks_bp.route("/search")
+def search_tracks():
+    query = request.args.get("q", "").strip()
+    
+    if not query or len(query) < 2:
+        return jsonify({"tracks": []})
+    
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({"tracks": []})
+    
+    cursor = conn.cursor(dictionary=True)
+    
+    search_query = """
+        SELECT t.track_id, t.track_name, a.artist_name
+        FROM Tracks t
+        LEFT JOIN Artists a ON t.artist_id = a.artist_id
+        WHERE t.track_name LIKE %s
+        ORDER BY t.popularity DESC, t.track_name
+        LIMIT 20
+    """
+    
+    cursor.execute(search_query, (f"%{query}%",))
+    tracks = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    
+    return jsonify({"tracks": tracks})

@@ -4,6 +4,9 @@ USE db_project;
 
 -- Drop existing tables if they exist
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS UserFavoriteTracks;
+DROP TABLE IF EXISTS UserFavoriteArtists;
+DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS AudioFeatures;
 DROP TABLE IF EXISTS Tracks;
@@ -62,6 +65,7 @@ CREATE TABLE IF NOT EXISTS Tracks (                                 -- Sabyr
     FOREIGN KEY (album_id) REFERENCES Albums(album_id) ON DELETE CASCADE,
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE,
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE CASCADE
+    -- CONSTRAINT unique track_album_artist CHECK (UNIQUE (track_name, album_id, artist_id) )
 );
 
 CREATE TABLE IF NOT EXISTS AudioFeatures (                          -- Frenklin
@@ -93,6 +97,29 @@ CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
     FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE,          -- Fav artist
 
     CONSTRAINT chk_users_email CHECK (email IS NULL OR email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$')
+);
+
+-- Composite Keys
+-- Junction table for user's favorite tracks
+CREATE TABLE IF NOT EXISTS UserFavoriteTracks (
+    user_id INT UNSIGNED NOT NULL,
+    track_id INT UNSIGNED NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    PRIMARY KEY (user_id, track_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (track_id) REFERENCES Tracks(track_id) ON DELETE CASCADE
+);
+
+-- Junction table for user's favorite artists
+CREATE TABLE IF NOT EXISTS UserFavoriteArtists (
+    user_id INT UNSIGNED NOT NULL,
+    artist_id INT UNSIGNED NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    PRIMARY KEY (user_id, artist_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE
 );
 
 
