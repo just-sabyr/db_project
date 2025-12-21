@@ -1,62 +1,69 @@
 import csv
 import requests
-from urllib.parse import quote
 import time
 
 # -------- CONFIG --------
-INPUT = "dataset_csv/albums.csv"
-OUTPUT = "dataset_csv/albums_fixed.csv"
+LASTFM_API_KEY = "42ed9d70c3843a8f6b2ea6242b9c1e1e"
 
-MAX_REAL_COVERS = 5000
+INPUT = "dataset_csv/albums.csv"
+OUTPUT = "dataset_csv/albums.csv"   # overwrite
+MAX_ALBUMS = 100                    # FREE + safe
 
 PLACEHOLDER = "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
 
-print(">>> fix_cover_urls.py started")
+LASTFM_ENDPOINT = "https://ws.audioscrobbler.com/2.0/"
 
 # -------- FUNCTION --------
-def get_wiki_cover(album_name):
+def get_album_cover(album_name, artist_name=None):
+    params = {
+        "method": "album.search",
+        "album": album_name,
+        "api_key": LASTFM_API_KEY,
+        "format": "json",
+        "limit": 1
+    }
+
     try:
-        page_title = quote(album_name.replace(" ", "_"))
-        url = f"https://en.wikipedia.org/wiki/{page_title}"
+        r = requests.get(LASTFM_ENDPOINT, params=params, timeout=5)
+        data = r.json()
 
-        response = requests.get(url, timeout=6)
-        if response.status_code != 200:
-            return PLACEHOLDER
+        albums = data.get("results", {}).get("albummatches", {}).get("album", [])
 
-        html = response.text
-
-        for line in html.splitlines():
-            if "upload.wikimedia.org" in line and ("jpg" in line or "png" in line):
-                start = line.find("https://upload.wikimedia.org")
-                end = line.find('"', start)
-                if end > start:
-                    return line[start:end]
+        if albums:
+            images = albums[0].get("image", [])
+            for img in reversed(images):  # get largest available
+                if img.get("#text"):
+                    return img["#text"]
 
     except Exception:
-        return PLACEHOLDER
+        pass
 
     return PLACEHOLDER
 
 
 # -------- MAIN --------
-with open(INPUT, newline="", encoding="utf-8") as fin, \
-     open(OUTPUT, "w", newline="", encoding="utf-8") as fout:
+print(">>> Last.fm cover fetch started")
 
+rows = []
+
+with open(INPUT, newline="", encoding="utf-8") as fin:
     reader = csv.DictReader(fin)
-    writer = csv.DictWriter(fout, fieldnames=reader.fieldnames)
-    writer.writeheader()
+    fieldnames = reader.fieldnames
 
     for i, row in enumerate(reader, start=1):
-
-        if i <= MAX_REAL_COVERS:
-            row["cover_url"] = get_wiki_cover(row["album_name"])
-            time.sleep(0.05)  # polite delay
+        if i <= MAX_ALBUMS:
+            row["cover_url"] = get_album_cover(row["album_name"])
+            time.sleep(0.2)  # polite delay
         else:
             row["cover_url"] = PLACEHOLDER
 
-        writer.writerow(row)
+        rows.append(row)
 
-        if i % 100 == 0:
-            print(f"Processed {i} albums...")
+        print(f"Processed {i} albums")
 
-print(f"✅ DONE: albums_fixed.csv created (real covers for first {MAX_REAL_COVERS})")
+with open(OUTPUT, "w", newline="", encoding="utf-8") as fout:
+    writer = csv.DictWriter(fout, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(rows)
+
+print(f"✅ DONE — covers fetched for first {MAX_ALBUMS} albums")
