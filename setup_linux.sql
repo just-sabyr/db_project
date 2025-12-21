@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS Artists (                                -- Flavio
     genre_id INT UNSIGNED NULL,
 
     UNIQUE (artist_name, country),                                  -- prevent duplicate artist names from same country
-    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Albums (                                 -- Ildi
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS Albums (                                 -- Ildi
     PRIMARY KEY (album_id),
     
     UNIQUE (artist_id, album_name),
-    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),   
-    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) 
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE CASCADE,   
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE
 );
 
 
@@ -59,9 +59,9 @@ CREATE TABLE IF NOT EXISTS Tracks (                                 -- Sabyr
     explicit BOOL NULL,
     popularity INT NULL,
 
-    FOREIGN KEY (album_id) REFERENCES Albums(album_id),
-    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id),
-    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+    FOREIGN KEY (album_id) REFERENCES Albums(album_id) ON DELETE CASCADE,
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE,
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS AudioFeatures (                          -- Frenklin
@@ -73,8 +73,9 @@ CREATE TABLE IF NOT EXISTS AudioFeatures (                          -- Frenklin
     tempo        DECIMAL(5,2),
     loudness     DECIMAL(4,1),
     acousticness DECIMAL(3,2),
+
     UNIQUE (track_id),
-    FOREIGN KEY (track_id) REFERENCES Tracks(track_id)              -- Added foreign key constraint from tracks
+    FOREIGN KEY (track_id) REFERENCES Tracks(track_id) ON DELETE CASCADE         
 );
 
 
@@ -86,8 +87,9 @@ CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
     dob DATE,
     genre_id INT UNSIGNED NULL,
     artist_id INT UNSIGNED NULL,
-    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),             -- Favourite genre
-    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id),          -- Fav artist
+
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE CASCADE,             -- Favourite genre
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE,          -- Fav artist
 
     CONSTRAINT chk_users_email CHECK (email IS NULL OR email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$')
 );
