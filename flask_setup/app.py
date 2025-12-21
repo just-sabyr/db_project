@@ -149,6 +149,7 @@ def create_app():
             if username == admin_user and password == admin_password:
                 session["logged_in"] = True
                 session["role"] = "admin"
+                session["username"] = "admin"
                 return redirect(url_for("index"))
             else:
                 error = "Invalid credentials. Please try again."
