@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for, session
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash
 import os
 import mysql.connector
 from mysql.connector import Error
@@ -159,7 +159,8 @@ def create_app():
     @app.route("/logout")
     def logout():
         session.clear()
-        return redirect(url_for("login"))
+        flash("You have been logged out successfully.", "info")
+        return redirect(url_for("index"))
     
 
         #  Chosse table pags for navbar Add/Edit

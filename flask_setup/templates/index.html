@@ -3,6 +3,28 @@
 {% block title %}Spotify Database Dashboard{% endblock %}
 
 {% block content %}
+
+<!-- Logged out notification -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" id="flash-alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <script>
+            setTimeout(function() {
+                var alert = document.getElementById('flash-alert');
+                if (alert) {
+                    alert.style.transition = 'opacity 0.5s';
+                    alert.style.opacity = '0';
+                    setTimeout(function() { alert.remove(); }, 500);
+                }
+            }, 3000);
+        </script>
+    {% endif %}
+{% endwith %}
+
 <div class="app-wrapper">
 
   <header class="app-header">

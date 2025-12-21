@@ -217,3 +217,40 @@ body {
 .page-wrap {
   padding: 30px;
 }
+
+
+/* Flash message notifications */
+.alert {
+  padding: 16px 24px;
+  margin: 20px auto;
+  max-width: 600px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.alert-info {
+  background-color: #1db954;
+  color: white;
+  border: 1px solid #1aa34a;
+}
+
+.alert-success {
+  background-color: #1db954;
+  color: white;
+  border: 1px solid #1aa34a;
+}
+
+.alert-warning {
+  background-color: #f0ad4e;
+  color: #333;
+  border: 1px solid #eea236;
+}
+
+.alert-error {
+  background-color: #d9534f;
+  color: white;
+  border: 1px solid #c9302c;
+}
