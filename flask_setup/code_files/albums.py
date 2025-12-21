@@ -5,11 +5,21 @@ from .shared import get_db_connection, execute_safe_query, role_required, get_ge
 albums_bp = Blueprint('albums', __name__)
 
 def build_album_fields(genres):
-    """Build fields for album form - artist uses search, not select"""
+    """Build fields for album form - artist uses search"""
     return [
         {"name": "album_name", "label": "Album Name", "type": "text", "required": True},
         {"name": "release_year", "label": "Release Year", "type": "text"},
-        {"name": "artist_id", "label": "Artist", "type": "artist_search"},  # Changed to search
+        {
+            "name": "artist_id", 
+            "label": "Artist", 
+            "type": "search",
+            "search_url": "/artists/search",
+            "data_key": "artists",
+            "id_field": "artist_id",
+            "name_field": "artist_name",
+            "secondary_field": "country",
+            "placeholder": "Search for an artist..."
+        },
         {
             "name": "genre_id", "label": "Genre", "type": "select",
             "options": [{"value": g["genre_id"], "text": g["genre_name"]} for g in genres]
@@ -61,6 +71,28 @@ def get_albums():
         total_pages=total_pages,
         total_count=total_count
     )
+
+@albums_bp.route("/by-artist/<int:artist_id>")
+def get_albums_by_artist(artist_id):
+    """Get all albums for a specific artist"""
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({"albums": []})
+    
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT album_id, album_name
+        FROM Albums
+        WHERE artist_id = %s
+        ORDER BY album_name
+    """, (artist_id,))
+    
+    albums = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    return jsonify({"albums": albums})
+
 
 @albums_bp.route("/new", methods=["GET", "POST"])
 @role_required("admin")
@@ -197,3 +229,33 @@ def delete_album(album_id):
         return jsonify({"error": error}), 500
 
     return redirect(url_for("albums.get_albums"))
+
+@albums_bp.route("/search")
+def search_albums():
+    """Search albums by name for autocomplete"""
+    query = request.args.get("q", "").strip()
+    
+    if len(query) < 1:
+        return jsonify({"albums": []})
+    
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({"albums": []})
+    
+    cursor = conn.cursor(dictionary=True)
+    
+    # Search albums and include artist name for display
+    cursor.execute("""
+        SELECT a.album_id, a.album_name, ar.artist_name
+        FROM Albums a
+        LEFT JOIN Artists ar ON a.artist_id = ar.artist_id
+        WHERE a.album_name LIKE %s
+        ORDER BY a.album_name
+        LIMIT 20
+    """, (f"%{query}%",))
+    
+    albums = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    return jsonify({"albums": albums})

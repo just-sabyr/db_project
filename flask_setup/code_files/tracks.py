@@ -1,28 +1,45 @@
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify
 import mysql.connector
-from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, get_albums_list, is_admin, paginate_query
+from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, is_admin, paginate_query
 
 tracks_bp = Blueprint('tracks', __name__)
 
-def build_track_fields(genres, artists, albums):
+def build_track_fields(genres):
+    """Build fields for track form - artist uses search, album depends on artist"""
     return [
-        {"name": "track_name", "label": "Track Name", "type": "text"},
+        {"name": "track_name", "label": "Track Name", "type": "text", "required": True},
         {
-            "name": "album_id", "label": "Album", "type": "select",
-            "options": [{"value": al["album_id"], "text": al["album_name"]} for al in albums]
+            "name": "artist_id", 
+            "label": "Artist", 
+            "type": "search",
+            "search_url": "/artists/search",
+            "data_key": "artists",
+            "id_field": "artist_id",
+            "name_field": "artist_name",
+            "secondary_field": "country",
+            "placeholder": "Search for an artist..."
         },
         {
-            "name": "artist_id", "label": "Artist", "type": "select",
-            "options": [{"value": a["artist_id"], "text": a["artist_name"]} for a in artists]
+            "name": "album_id", 
+            "label": "Album", 
+            "type": "dependent_select",
+            "depends_on": "artist_id",
+            "fetch_url": "/albums/by-artist/",
+            "data_key": "albums",
+            "id_field": "album_id",
+            "name_field": "album_name",
+            "placeholder": "Select an artist first..."
         },
         {
             "name": "genre_id", "label": "Genre", "type": "select",
             "options": [{"value": g["genre_id"], "text": g["genre_name"]} for g in genres]
         },
-        {"name": "duration", "label": "Duration", "type": "text"},
+        {"name": "duration", "label": "Duration (seconds)", "type": "text"},
         {"name": "explicit", "label": "Explicit (0/1)", "type": "text"},
         {"name": "popularity", "label": "Popularity", "type": "text"},
     ]
+
+
 
 def track_edit_url(row):
     return url_for("tracks.edit_track", track_id=row["track_id"])
@@ -73,9 +90,8 @@ def get_tracks():
 @tracks_bp.route("/new", methods=["GET", "POST"])
 @role_required("admin")
 def create_track():
-    genres, artists = get_genres_and_artists()
-    albums = get_albums_list()
-    fields = build_track_fields(genres, artists, albums)
+    genres, _ = get_genres_and_artists()
+    fields = build_track_fields(genres)
 
     if request.method == "POST":
         track_name = request.form.get("track_name")
@@ -85,6 +101,29 @@ def create_track():
         duration = request.form.get("duration") or None
         explicit = request.form.get("explicit") or None
         popularity = request.form.get("popularity") or None
+
+        # Validate album belongs to artist if both are provided
+        if album_id and artist_id:
+            conn = get_db_connection()
+            if conn:
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute(
+                    "SELECT artist_id FROM Albums WHERE album_id = %s",
+                    (album_id,)
+                )
+                album = cursor.fetchone()
+                cursor.close()
+                conn.close()
+                
+                if album and album["artist_id"] and str(album["artist_id"]) != str(artist_id):
+                    return render_template(
+                        "add.html",
+                        title="Track",
+                        subtitle="Create a new track record",
+                        fields=fields,
+                        cancel_url=url_for("tracks.get_tracks"),
+                        error_message="The selected album does not belong to the selected artist."
+                    )
 
         query = """
             INSERT INTO Tracks (track_name, album_id, artist_id, genre_id, duration, explicit, popularity)
@@ -125,15 +164,31 @@ def edit_track(track_id):
     cursor.execute("SELECT * FROM Tracks WHERE track_id = %s;", (track_id,))
     track = cursor.fetchone()
 
+    if not track:
+        cursor.close()
+        conn.close()
+        return redirect(url_for("tracks.get_tracks"))
+
+    # Get display names for search fields
+    search_display_values = {}
+    
+    if track.get("artist_id"):
+        cursor.execute("SELECT artist_name FROM Artists WHERE artist_id = %s", (track["artist_id"],))
+        artist = cursor.fetchone()
+        if artist:
+            search_display_values["artist_id"] = artist["artist_name"]
+
+    if track.get("album_id"):
+        cursor.execute("SELECT album_name FROM Albums WHERE album_id = %s", (track["album_id"],))
+        album = cursor.fetchone()
+        if album:
+            search_display_values["album_id"] = album["album_name"]
+
     cursor.close()
     conn.close()
 
-    if not track:
-        return redirect(url_for("tracks.get_tracks"))
-
-    genres, artists = get_genres_and_artists()
-    albums = get_albums_list()
-    fields = build_track_fields(genres, artists, albums)
+    genres, _ = get_genres_and_artists()
+    fields = build_track_fields(genres)
 
     if request.method == "POST":
         track_name = request.form.get("track_name")
@@ -144,17 +199,38 @@ def edit_track(track_id):
         explicit = request.form.get("explicit") or None
         popularity = request.form.get("popularity") or None
 
+        # Validate album belongs to artist if both are provided
+        if album_id and artist_id:
+            conn2 = get_db_connection()
+            if conn2:
+                cursor2 = conn2.cursor(dictionary=True)
+                cursor2.execute(
+                    "SELECT artist_id FROM Albums WHERE album_id = %s",
+                    (album_id,)
+                )
+                album_check = cursor2.fetchone()
+                cursor2.close()
+                conn2.close()
+                
+                if album_check and album_check["artist_id"] and str(album_check["artist_id"]) != str(artist_id):
+                    return render_template(
+                        "edit.html",
+                        title="Track",
+                        subtitle=f"Editing track_id = {track_id}",
+                        fields=fields,
+                        values=track,
+                        search_display_values=search_display_values,
+                        cancel_url=url_for("tracks.get_tracks"),
+                        error_message="The selected album does not belong to the selected artist."
+                    )
+
         query = """
             UPDATE Tracks
-            SET track_name = %s,
-                album_id = %s,
-                artist_id = %s,
-                genre_id = %s,
-                duration = %s,
-                explicit = %s,
-                popularity = %s
+            SET track_name = %s, album_id = %s, artist_id = %s, genre_id = %s,
+                duration = %s, explicit = %s, popularity = %s
             WHERE track_id = %s;
         """
+
         params = (track_name, album_id, artist_id, genre_id, duration, explicit, popularity, track_id)
 
         success, error = execute_safe_query(query, params)
@@ -164,16 +240,8 @@ def edit_track(track_id):
                 title="Track",
                 subtitle=f"Editing track_id = {track_id}",
                 fields=fields,
-                values={
-                    **track,
-                    "track_name": track_name,
-                    "album_id": album_id,
-                    "artist_id": artist_id,
-                    "genre_id": genre_id,
-                    "duration": duration,
-                    "explicit": explicit,
-                    "popularity": popularity,
-                },
+                values=track,
+                search_display_values=search_display_values,
                 cancel_url=url_for("tracks.get_tracks"),
                 error_message=error
             )
@@ -186,9 +254,12 @@ def edit_track(track_id):
         subtitle=f"Editing track_id = {track_id}",
         fields=fields,
         values=track,
+        search_display_values=search_display_values,
         cancel_url=url_for("tracks.get_tracks"),
         error_message=None
     )
+
+
 
 @tracks_bp.route("/<int:track_id>/delete", methods=["POST"])
 @role_required("admin")
@@ -200,3 +271,4 @@ def delete_track(track_id):
         return jsonify({"error": error}), 500
 
     return redirect(url_for("tracks.get_tracks"))
+    
