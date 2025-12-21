@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify
 import mysql.connector
-from .shared import get_db_connection, execute_safe_query, role_required, get_tracks_list, is_admin
+from .shared import get_db_connection, execute_safe_query, role_required, get_tracks_list, is_admin, paginate_query
 
 audiofeatures_bp = Blueprint('audiofeatures', __name__)
 
@@ -31,11 +31,17 @@ def get_audio_features():
         return jsonify({"error": "Cannot connect to database"}), 500
 
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT feature_id, track_id, danceability, energy, valence, tempo, loudness, acousticness
-        FROM AudioFeatures LIMIT 20;
-    """)
-    rows = cursor.fetchall()
+    
+    # Get page from query params, default to 1
+    page = request.args.get("page", 1, type=int)
+    per_page = 10  # Items per page
+    
+    base_query = "SELECT feature_id, track_id, danceability, energy, valence, tempo, loudness, acousticness FROM AudioFeatures"
+    count_query = "SELECT COUNT(*) AS total FROM AudioFeatures"
+    
+    rows, total_count, total_pages, current_page = paginate_query(
+        cursor, base_query, count_query, page=page, per_page=per_page
+    )
 
     cursor.close()
     conn.close()
@@ -51,8 +57,13 @@ def get_audio_features():
         add_url=(url_for("audiofeatures.create_audiofeatures") if is_admin() else None),
         edit_url_builder=(audiofeatures_edit_url if is_admin() else None),
         delete_url_builder=(audiofeatures_delete_url if is_admin() else None),
-        description=None
+        description=None,
+        # Pagination data
+        current_page=current_page,
+        total_pages=total_pages,
+        total_count=total_count
     )
+
 
 @audiofeatures_bp.route("/new", methods=["GET", "POST"])
 @role_required("admin")

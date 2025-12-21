@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify
 import mysql.connector
-from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, get_albums_list, is_admin
+from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, get_albums_list, is_admin, paginate_query
 
 tracks_bp = Blueprint('tracks', __name__)
 
@@ -37,11 +37,17 @@ def get_tracks():
         return jsonify({"error": "Cannot connect to database"}), 500
 
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT track_id, track_name, album_id, artist_id, genre_id, duration, explicit, popularity
-        FROM Tracks LIMIT 20;
-    """)
-    rows = cursor.fetchall()
+    
+    # Get page from query params, default to 1
+    page = request.args.get("page", 1, type=int)
+    per_page = 10  # Items per page
+    
+    base_query = "SELECT track_id, track_name, album_id, artist_id, genre_id, duration, explicit, popularity FROM Tracks"
+    count_query = "SELECT COUNT(*) AS total FROM Tracks"
+    
+    rows, total_count, total_pages, current_page = paginate_query(
+        cursor, base_query, count_query, page=page, per_page=per_page
+    )
 
     cursor.close()
     conn.close()
@@ -57,7 +63,11 @@ def get_tracks():
         add_url=(url_for("tracks.create_track") if is_admin() else None),
         edit_url_builder=(track_edit_url if is_admin() else None),
         delete_url_builder=(track_delete_url if is_admin() else None),
-        description=None
+        description=None,
+        # Pagination data
+        current_page=current_page,
+        total_pages=total_pages,
+        total_count=total_count
     )
 
 @tracks_bp.route("/new", methods=["GET", "POST"])

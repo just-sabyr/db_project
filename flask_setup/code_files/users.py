@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect, url_for, render_template, session
 import mysql.connector
-from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, login_required
+from .shared import get_db_connection, execute_safe_query, role_required, get_genres_and_artists, login_required, paginate_query
 
 users_bp = Blueprint('users', __name__)
 
@@ -34,11 +34,17 @@ def get_users():
         return
 
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT user_id, username, email, phone_number, dob, genre_id, artist_id
-        FROM Users LIMIT 50;
-    """)
-    rows = cursor.fetchall()
+    
+    # Get page from query params, default to 1
+    page = request.args.get("page", 1, type=int)
+    per_page = 10  # Items per page
+    
+    base_query = "SELECT user_id, username, email, phone_number, dob, genre_id, artist_id FROM Users"
+    count_query = "SELECT COUNT(*) AS total FROM Users"
+    
+    rows, total_count, total_pages, current_page = paginate_query(
+        cursor, base_query, count_query, page=page, per_page=per_page
+    )
 
     cursor.close()
     conn.close()
@@ -54,7 +60,11 @@ def get_users():
         add_url=url_for("users.create_user"),
         edit_url_builder=user_edit_url,
         delete_url_builder=user_delete_url,
-        description=None
+        description=None,
+        # Pagination data
+        current_page=current_page,
+        total_pages=total_pages,
+        total_count=total_count
     )
 
 @users_bp.route("/new", methods=["GET", "POST"])
