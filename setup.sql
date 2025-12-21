@@ -92,6 +92,9 @@ CREATE TABLE IF NOT EXISTS Users (                                  -- Sabyr
     CONSTRAINT chk_users_email CHECK (email IS NULL OR email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$')
 );
 
+ALTER TABLE Users
+ADD COLUMN password_hash VARCHAR(255);
+
 
 -- Load data from CSV files
 
