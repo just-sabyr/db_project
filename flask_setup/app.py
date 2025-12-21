@@ -26,8 +26,8 @@ def create_app():
 
     # basic database settings (taken from .env or the default values)
     app.config["DB_HOST"] = os.getenv("DB_HOST", "localhost")
-    app.config["DB_USER"] = os.getenv("DB_USER", "KATCHAW")
-    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "KATCHAW")
+    app.config["DB_USER"] = os.getenv("DB_USER", "superuser")
+    app.config["DB_PASSWORD"] = os.getenv("DB_PASSWORD", "123")
     app.config["DB_NAME"] = os.getenv("DB_NAME", "db_project")
 
     # Register blueprints
