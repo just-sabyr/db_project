@@ -413,3 +413,146 @@ tr:hover {
     box-shadow: 0 3px 8px rgba(229, 57, 53, 0.25);
 }
 
+/* Theme support for login adn signup */
+
+/* Default/Dark variables */
+.user-form-page {
+  --bg: #0f0f0f;
+  --panel: #181818;
+  --border: rgba(255, 255, 255, 0.10);
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.72);
+  --input-bg: #121212;
+  --input-border: #333;
+  --shadow: 0 18px 38px rgba(0, 0, 0, 0.55);
+  --accent: #1db954;
+  --accent-hover: #1ed760;
+  --danger-bg: rgba(220, 53, 69, 0.12);
+  --danger-border: rgba(220, 53, 69, 0.35);
+  --success-bg: rgba(29, 185, 84, 0.12);
+  --success-border: rgba(29, 185, 84, 0.35);
+}
+
+/* Light theme variables  */
+.user-form-page.theme-light {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --border: rgba(17, 24, 39, 0.12);
+  --text: #111827;
+  --muted: rgba(17, 24, 39, 0.65);
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --shadow: 0 16px 30px rgba(17, 24, 39, 0.10);
+  --accent: #1db954;
+  --accent-hover: #17c65a;
+  --danger-bg: rgba(220, 38, 38, 0.08);
+  --danger-border: rgba(220, 38, 38, 0.25);
+  --success-bg: rgba(29, 185, 84, 0.10);
+  --success-border: rgba(29, 185, 84, 0.28);
+}
+
+.user-form-page {
+  background:
+    radial-gradient(1100px 500px at 50% 0%, rgba(29, 185, 84, 0.12), transparent 55%),
+    var(--bg);
+  color: var(--text);
+}
+
+.user-form-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.user-form-header h1 {
+  color: var(--text);
+}
+
+.user-form-header .subtitle {
+  color: var(--muted);
+}
+
+.back-link {
+  color: var(--muted);
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+.user-form-grid label {
+  color: var(--text);
+}
+
+.user-form-grid input {
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+}
+
+.user-form-grid input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.18);
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: #000;
+}
+
+.primary-btn:hover {
+  background: var(--accent-hover);
+}
+
+.error-box {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+}
+
+.success-box {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+}
+
+html, body {
+  height: 100%;
+}
+
+.user-form-page {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  /* smoother background  */
+  background:
+    radial-gradient(900px 450px at 50% 0%, rgba(29,185,84,0.14), transparent 60%),
+    radial-gradient(700px 450px at 12% 18%, rgba(255,255,255,0.06), transparent 55%),
+    radial-gradient(700px 450px at 88% 18%, rgba(255,255,255,0.05), transparent 55%),
+    var(--bg);
+
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.user-form-container {
+  width: min(960px, 100%);
+  padding: 46px 18px 60px;
+}
+
+.user-form-card {
+  border-radius: 16px;
+}
+
+.user-form-header {
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+.user-form-page * {
+  scroll-margin-top: 80px;
+}
+
