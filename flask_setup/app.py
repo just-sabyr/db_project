@@ -171,7 +171,6 @@ def create_app():
         return render_template("album_audio_stats.html", results=results)
 
     @app.route("/most-energetic-albums")
-    @role_required("admin")  # remove this line if you want everyone to access it
     def most_energetic_albums():
         conn = get_db_connection()
         if conn is None:
