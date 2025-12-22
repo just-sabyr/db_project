@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Album Audio Feature Statistics</h2>
+
+<table>
+    <tr>
+        <th>Album</th>
+        <th>Tracks</th>
+        <th>Avg Energy</th>
+        <th>Avg Danceability</th>
+        <th>Avg Valence</th>
+    </tr>
+    {% for row in results %}
+    <tr>
+        <td>{{ row.album_name }}</td>
+        <td>{{ row.track_count }}</td>
+        <td>{{ "%.2f"|format(row.avg_energy) }}</td>
+        <td>{{ "%.2f"|format(row.avg_danceability) }}</td>
+        <td>{{ "%.2f"|format(row.avg_valence) }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
