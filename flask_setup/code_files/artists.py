@@ -34,7 +34,12 @@ def get_artists():
     page = request.args.get("page", 1, type=int)
     per_page = 10  # Items per page
     
-    base_query = "SELECT artist_id, artist_name, country, genre_id, artist_popularity FROM Artists"
+    base_query = """
+        SELECT a.artist_id, a.artist_name, a.country, g.genre_name, a.artist_popularity
+        FROM Artists a
+        LEFT JOIN Genres g ON a.genre_id = g.genre_id
+    """
+
     count_query = "SELECT COUNT(*) AS total FROM Artists"
     
     rows, total_count, total_pages, current_page = paginate_query(
@@ -48,8 +53,8 @@ def get_artists():
         "list.html",
         title="Artists",
         subtitle="Browse artists from the database",
-        columns=["artist_id", "artist_name", "country", "genre_id", "artist_popularity"],
-        keys=["artist_id", "artist_name", "country", "genre_id", "artist_popularity"],
+        columns=["artist_id", "artist_name", "country", "genre_name", "artist_popularity"],
+        keys=["artist_id", "artist_name", "country", "genre_name", "artist_popularity"],
         rows=rows,
         show_actions=is_admin(),
         add_url=(url_for("artists.create_artist") if is_admin() else None),

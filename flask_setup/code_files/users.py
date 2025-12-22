@@ -27,11 +27,11 @@ def user_delete_url(row):
     return url_for("users.delete_user", user_id=row["user_id"])
 
 @users_bp.route("/")
-@login_required
+@role_required('admin')
 def get_users():
     conn = get_db_connection()
     if conn is None:
-        return
+        return jsonify({"error": "Cannot connect to database"}), 500
 
     cursor = conn.cursor(dictionary=True)
     
@@ -39,7 +39,13 @@ def get_users():
     page = request.args.get("page", 1, type=int)
     per_page = 10  # Items per page
     
-    base_query = "SELECT user_id, username, email, phone_number, dob, genre_id, artist_id FROM Users"
+    base_query = """
+        SELECT u.user_id, u.username, u.email, u.phone_number, u.dob, 
+               g.genre_name AS favorite_genre, a.artist_name AS favorite_artist
+        FROM Users u
+        LEFT JOIN Genres g ON u.genre_id = g.genre_id
+        LEFT JOIN Artists a ON u.artist_id = a.artist_id
+    """
     count_query = "SELECT COUNT(*) AS total FROM Users"
     
     rows, total_count, total_pages, current_page = paginate_query(
@@ -53,8 +59,8 @@ def get_users():
         "list.html",
         title="Users",
         subtitle="View and manage users",
-        columns=["user_id", "username", "email", "phone_number", "dob", "genre_id", "artist_id"],
-        keys=["user_id", "username", "email", "phone_number", "dob", "genre_id", "artist_id"],
+        columns=["user_id", "username", "email", "phone_number", "dob", "favorite_genre", "favorite_artist"],
+        keys=["user_id", "username", "email", "phone_number", "dob", "favorite_genre", "favorite_artist"],
         rows=rows,
         show_actions=True,
         add_url=url_for("users.create_user"),

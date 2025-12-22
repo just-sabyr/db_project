@@ -47,6 +47,7 @@ def track_edit_url(row):
 def track_delete_url(row):
     return url_for("tracks.delete_track", track_id=row["track_id"])
 
+
 @tracks_bp.route("/")
 def get_tracks():
     conn = get_db_connection()
@@ -59,7 +60,14 @@ def get_tracks():
     page = request.args.get("page", 1, type=int)
     per_page = 10  # Items per page
     
-    base_query = "SELECT track_id, track_name, album_id, artist_id, genre_id, duration, explicit, popularity FROM Tracks"
+    base_query = """
+        SELECT t.track_id, t.track_name, al.album_name, ar.artist_name, g.genre_name, 
+               t.duration, t.explicit, t.popularity
+        FROM Tracks t
+        LEFT JOIN Albums al ON t.album_id = al.album_id
+        LEFT JOIN Artists ar ON t.artist_id = ar.artist_id
+        LEFT JOIN Genres g ON t.genre_id = g.genre_id
+    """
     count_query = "SELECT COUNT(*) AS total FROM Tracks"
     
     rows, total_count, total_pages, current_page = paginate_query(
@@ -73,8 +81,8 @@ def get_tracks():
         "list.html",
         title="Tracks",
         subtitle="Browse tracks from the database",
-        columns=["track_id", "track_name", "album_id", "artist_id", "genre_id", "duration", "explicit", "popularity"],
-        keys=["track_id", "track_name", "album_id", "artist_id", "genre_id", "duration", "explicit", "popularity"],
+        columns=["track_id", "track_name", "album_name", "artist_name", "genre_name", "duration", "explicit", "popularity"],
+        keys=["track_id", "track_name", "album_name", "artist_name", "genre_name", "duration", "explicit", "popularity"],
         rows=rows,
         show_actions=is_admin(),
         add_url=(url_for("tracks.create_track") if is_admin() else None),

@@ -45,7 +45,12 @@ def get_albums():
     page = request.args.get("page", 1, type=int)
     per_page = 10  # Items per page
     
-    base_query = "SELECT album_id, album_name, release_year, artist_id, genre_id, cover_url FROM Albums"
+    base_query = """
+        SELECT a.album_id, a.album_name, a.release_year, ar.artist_name, g.genre_name, a.cover_url
+        FROM Albums a
+        LEFT JOIN Artists ar ON a.artist_id = ar.artist_id
+        LEFT JOIN Genres g ON a.genre_id = g.genre_id
+    """
     count_query = "SELECT COUNT(*) AS total FROM Albums"
     
     rows, total_count, total_pages, current_page = paginate_query(
@@ -58,8 +63,8 @@ def get_albums():
         "list.html",
         title="Albums",
         subtitle="Browse albums from the database",
-        columns=["album_id", "album_name", "release_year", "artist_id", "genre_id", "cover_url"],
-        keys=["album_id", "album_name", "release_year", "artist_id", "genre_id", "cover_url"],
+        columns=["album_id", "album_name", "release_year", "artist_name", "genre_name", "cover_url"],
+        keys=["album_id", "album_name", "release_year", "artist_name", "genre_name", "cover_url"],
         rows=rows,
         show_actions=is_admin(),
         add_url=(url_for("albums.create_album") if is_admin() else None),
@@ -71,6 +76,7 @@ def get_albums():
         total_pages=total_pages,
         total_count=total_count
     )
+    
 
 @albums_bp.route("/by-artist/<int:artist_id>")
 def get_albums_by_artist(artist_id):
