@@ -655,3 +655,21 @@ body {
     transform: none;
   }
 }
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.navbar-left,
+.navbar-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
