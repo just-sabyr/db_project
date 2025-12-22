@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stats_dark.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="stats-page">
+
+  <h1 class="stats-title">Most Energetic Albums</h1>
+  <p class="stats-subtitle">
+    Albums ranked by average track energy (only albums with average energy above 0.7)
+  </p>
+
+  {% if results %}
+  <div class="table-container">
+    <table class="stats-table">
+      <thead>
+        <tr>
+          <th>Album</th>
+          <th>Average Energy</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in results %}
+        <tr>
+          <td class="album-name">{{ row.album_name }}</td>
+          <td>{{ "%.2f"|format(row.avg_energy) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="no-data">No energetic albums found.</p>
+  {% endif %}
+
+</div>
+{% endblock %}
