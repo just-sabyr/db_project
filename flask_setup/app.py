@@ -139,6 +139,40 @@ def create_app():
 
     # Login and logout 
 
+
+    @app.route("/album-audio-stats")
+    def album_audio_stats():
+        conn = get_db_connection()
+        if conn is None:
+            flash("Database connection failed.", "error")
+            return redirect(url_for("index"))
+
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT 
+                a.album_name,
+                COUNT(t.track_id) AS track_count,
+                AVG(af.energy) AS avg_energy,
+                AVG(af.danceability) AS avg_danceability,
+                AVG(af.valence) AS avg_valence
+            FROM Albums a
+            JOIN Tracks t ON a.album_id = t.album_id
+            LEFT JOIN AudioFeatures af ON t.track_id = af.track_id
+            GROUP BY a.album_id, a.album_name
+            ORDER BY avg_energy DESC;
+        """)
+
+        results = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return render_template("album_audio_stats.html", results=results)
+
+    
+    
+    
     @app.route("/login", methods=["GET", "POST"])
     def login():
         error = None
