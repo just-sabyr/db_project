@@ -556,3 +556,36 @@ html, body {
   scroll-margin-top: 80px;
 }
 
+/* signup button design */
+
+.form-footer a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: 6px;
+  padding: 6px 14px;
+
+  border-radius: 999px;
+  background-color: var(--accent);
+  color: #000000;
+
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.form-footer a:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+}
+
+.form-footer a:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
