@@ -52,5 +52,13 @@
 </p>
 
 </div>
+<script>
+  (function () {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.body.classList.add("theme-light");
+    }
+  })();
+</script>
 </body>
 </html>
