@@ -479,3 +479,149 @@ body {
     text-align: center;
   }
 }
+
+
+/* Main page UI light mode */
+
+body {
+  background:
+    radial-gradient(1100px 500px at 50% 0%, rgba(29, 185, 84, 0.12), transparent 55%),
+    radial-gradient(900px 500px at 10% 15%, rgba(17, 24, 39, 0.06), transparent 55%),
+    #f6f7fb;
+}
+
+.page-wrap {
+  padding: 38px 18px 40px;
+}
+
+.app-wrapper {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 8px;
+}
+
+.app-header {
+  margin: 32px auto 22px;
+  text-align: left;
+}
+
+.app-header h1 {
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.app-header .subtitle {
+  max-width: 740px;
+  font-size: 1.05rem;
+  color: rgba(17, 24, 39, 0.65);
+  line-height: 1.45;
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  border-radius: 16px;
+  padding: 22px 22px;
+  box-shadow: 0 18px 38px rgba(17, 24, 39, 0.10);
+}
+
+.card-large {
+  grid-column: 1 / -1;
+}
+
+.card h2 {
+  font-size: 1.35rem;
+  letter-spacing: -0.015em;
+  margin-bottom: 10px;
+  color: rgba(17, 24, 39, 0.95);
+}
+
+.card p {
+  color: rgba(17, 24, 39, 0.70);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  margin-top: 8px;
+  padding-left: 18px;
+}
+
+.info-list li {
+  margin: 10px 0;
+  color: rgba(17, 24, 39, 0.72);
+  line-height: 1.45;
+}
+
+.info-list strong {
+  color: #1db954;
+  font-weight: 800;
+}
+
+.app-footer {
+  margin-top: 28px;
+  text-align: center;
+  color: rgba(17, 24, 39, 0.45);
+  font-size: 0.92rem;
+}
+
+/* Navbar polish */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.78);
+  border-bottom: 1px solid rgba(17, 24, 39, 0.10);
+  backdrop-filter: blur(10px);
+}
+
+.navbar a {
+  color: rgba(17, 24, 39, 0.72);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.navbar a:hover {
+  color: #111827;
+}
+
+.navbar a.active {
+  color: #111827;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.theme-toggle {
+  background: rgba(17, 24, 39, 0.04);
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: rgba(17, 24, 39, 0.85);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  border-color: rgba(29, 185, 84, 0.55);
+}
+
+
+/* Completely remove flash messages */
+.flash-messages,
+.flash {
+  display: none !important;
+}
