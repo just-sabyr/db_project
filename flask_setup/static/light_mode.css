@@ -625,3 +625,33 @@ body {
 .flash {
   display: none !important;
 }
+
+/* 
+   putting theme toogle right  */
+
+.navbar {
+  position: relative;
+}
+
+.navbar-right {
+  padding-right: 160px; 
+}
+
+.navbar-left .theme-toggle {
+  position: absolute;
+  right: 95px;          
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 60;
+}
+
+@media (max-width: 900px) {
+  .navbar-right {
+    padding-right: 0;
+  }
+
+  .navbar-left .theme-toggle {
+    position: static;
+    transform: none;
+  }
+}
