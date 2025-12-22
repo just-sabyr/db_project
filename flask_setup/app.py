@@ -170,10 +170,10 @@ def create_app():
 
         return render_template("album_audio_stats.html", results=results)
    
-        @app.route("/artists-stats")
-        @role_required("admin")
-        def artists_stats():
-            conn = get_db_connection()
+    @app.route("/artists-stats")
+    @role_required("admin")
+    def artists_stats():
+        conn = get_db_connection()
         if conn is None:
             flash("Database connection failed.", "error")
             return redirect(url_for("index"))
