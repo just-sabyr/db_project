@@ -271,14 +271,14 @@ def create_app():
             if conn:
                 cursor = conn.cursor(dictionary=True)
                 cursor.execute(
-                    "SELECT user_id, username, password_hash FROM Users WHERE username = %s",
+                    "SELECT user_id, username, password FROM Users WHERE username = %s",
                     (username,)
                 )
                 user = cursor.fetchone()
                 cursor.close()
                 conn.close()
 
-                if user and check_password_hash(user["password_hash"], password):
+                if user and check_password_hash(user["password"], password):
                     session["logged_in"] = True
                     session["role"] = "user"
                     session["username"] = user["username"]
@@ -368,7 +368,7 @@ def create_app():
                     # Only update password if provided
                     if new_password:
                         hashed_password = generate_password_hash(new_password)
-                        update_fields.append("password_hash = %s")
+                        update_fields.append("password = %s")
                         params.append(hashed_password)
 
                     params.append(user_id)
@@ -440,7 +440,7 @@ def create_app():
 
       
             cursor.execute(
-                "INSERT INTO Users (username, password_hash) VALUES (%s, %s)",
+                "INSERT INTO Users (username, password) VALUES (%s, %s)",
                 (username, generate_password_hash(password))
             )
 
