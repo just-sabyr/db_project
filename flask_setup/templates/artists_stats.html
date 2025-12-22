@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Artist Statistics - Spotify DB{% endblock %}
+
+{% block content %}
+<div class="stats-page">
+    <h1>Artist Statistics</h1>
+    <p class="subtitle">
+        Detailed analytics and insights about artists in the database.
+    </p>
+
+    <!-- Summary cards -->
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total artists</div>
+            <div class="stat-value">{{ total_artists }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Average popularity</div>
+            <div class="stat-value">
+                {{ avg_popularity | round(2) if avg_popularity else "N/A" }}
+            </div>
+        </div>
+    </section>
+
+    <!-- Top artist -->
+    <section class="stats-section">
+        <h2>Most popular artist</h2>
+
+        {% if top_artist %}
+        <div class="stat-card wide">
+            <div class="stat-label">{{ top_artist.artist_name }}</div>
+            <div class="stat-value">
+                Popularity: {{ top_artist.artist_popularity }}
+            </div>
+        </div>
+        {% else %}
+        <p>No artist data available.</p>
+        {% endif %}
+    </section>
+
+    <!-- Artists by country -->
+    <section class="stats-section">
+        <h2>Artists by country</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>Number of artists</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in artists_by_country %}
+                    <tr>
+                        <td>{{ row.country or "Unknown" }}</td>
+                        <td>{{ row.total }}</td>
+                    </tr>
+                    {% endfor %}
+
+                    {% if not artists_by_country %}
+                    <tr>
+                        <td colspan="2">No data available.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}
