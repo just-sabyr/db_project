@@ -169,6 +169,53 @@ def create_app():
         conn.close()
 
         return render_template("album_audio_stats.html", results=results)
+   
+        @app.route("/artists-stats")
+        @role_required("admin")
+        def artists_stats():
+            conn = get_db_connection()
+        if conn is None:
+            flash("Database connection failed.", "error")
+            return redirect(url_for("index"))
+
+        cursor = conn.cursor(dictionary=True)
+
+        # total artists
+        cursor.execute("SELECT COUNT(*) AS total FROM Artists;")
+        total_artists = cursor.fetchone()["total"]
+
+        # average popularity
+        cursor.execute("SELECT AVG(artist_popularity) AS avg_popularity FROM Artists;")
+        avg_popularity = cursor.fetchone()["avg_popularity"]
+
+        # most popular artist
+        cursor.execute("""
+            SELECT artist_name, artist_popularity
+            FROM Artists
+            ORDER BY artist_popularity DESC
+            LIMIT 1;
+        """)
+        top_artist = cursor.fetchone()
+
+        # artists by country (COMPLEX QUERY)
+        cursor.execute("""
+            SELECT country, COUNT(*) AS total
+            FROM Artists
+            GROUP BY country
+            ORDER BY total DESC;
+        """)
+        artists_by_country = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return render_template(
+            "artists_stats.html",
+            total_artists=total_artists,
+            avg_popularity=avg_popularity,
+            top_artist=top_artist,
+            artists_by_country=artists_by_country
+        )
 
     @app.route("/most-energetic-albums")
     def most_energetic_albums():
