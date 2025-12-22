@@ -302,3 +302,24 @@ def search_tracks():
     conn.close()
     
     return jsonify({"tracks": tracks})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
