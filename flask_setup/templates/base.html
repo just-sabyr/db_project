@@ -28,6 +28,7 @@
       <a href="{{ url_for('tracks.get_tracks') }}" class="{% if request.path.startswith('/tracks') %}active{% endif %}">Tracks</a>
       <a href="{{ url_for('audiofeatures.get_audio_features') }}" class="{% if request.path.startswith('/audiofeatures') %}active{% endif %}">Audio</a>
        <a href="{{ url_for('album_audio_stats') }}">Album Audio Stats</a>
+       <a href="{{ url_for('most_energetic_albums') }}">Most Energetic Albums</a>
   
       {# Admin-only links #}
       {% if session.get("logged_in") and session.get("role") == "admin" %}
