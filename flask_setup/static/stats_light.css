@@ -105,3 +105,67 @@
     grid-column: span 1;
   }
 }
+
+.stats-page {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.stats-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #111;
+}
+
+.stats-subtitle {
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.table-container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stats-table thead {
+    background-color: #1db954;
+}
+
+.stats-table th {
+    color: #fff;
+    text-align: left;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.stats-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #222;
+}
+
+.stats-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.album-name {
+    max-width: 420px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.no-data {
+    color: #666;
+    margin-top: 20px;
+}
