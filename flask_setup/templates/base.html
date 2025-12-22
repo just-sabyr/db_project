@@ -6,7 +6,9 @@
 
   <link id="theme-css" rel="stylesheet" href="{{ url_for('static', filename='dark_mode.css') }}">
 
-  {% block extra_css %} {% endblock %}
+  {% block extra_css %} 
+   <link rel="stylesheet" href="{{ url_for('static', filename='stats_dark.css') }}">
+  {% endblock %}
 </head>
 
 <body>
@@ -25,6 +27,7 @@
       <a href="{{ url_for('albums.get_albums') }}" class="{% if request.path.startswith('/albums') %}active{% endif %}">Albums</a>
       <a href="{{ url_for('tracks.get_tracks') }}" class="{% if request.path.startswith('/tracks') %}active{% endif %}">Tracks</a>
       <a href="{{ url_for('audiofeatures.get_audio_features') }}" class="{% if request.path.startswith('/audiofeatures') %}active{% endif %}">Audio</a>
+       <a href="{{ url_for('album_audio_stats') }}">Album Audio Stats</a>
   
       {# Admin-only links #}
       {% if session.get("logged_in") and session.get("role") == "admin" %}
