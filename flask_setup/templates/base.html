@@ -45,8 +45,8 @@
             </a>
             <a href="{{ url_for('favorites.list_favorite_tracks') }}" class="{% if request.path == '/favorites/tracks' %}active{% endif %}"> ❤️ Tracks</a>
             <a href="{{ url_for('favorites.list_favorite_artists') }}" class="{% if request.path == '/favorites/artists' %}active{% endif %}"> ❤️ Artists</a>
-            <a href="{{ url_for('album_audio_stats') }}" class="{% if request.endpoint == 'album_audio_stats' %}active{% endif %}">Album Audio Stats</a>
-            <a href="{{ url_for('most_energetic_albums') }}" class="{% if request.endpoint == 'most_energetic_albums' %}active{% endif %}">Most Energetic Albums</a>
+            <a href="{{ url_for('album_audio_stats') }}" class="{% if request.endpoint == 'album_audio_stats' %}active{% endif %}">📊Audio</a>
+            <a href="{{ url_for('most_energetic_albums') }}" class="{% if request.endpoint == 'most_energetic_albums' %}active{% endif %}">⚡Albums</a>
        
           {% endif %}
         </span>
