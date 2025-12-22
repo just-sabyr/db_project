@@ -170,7 +170,34 @@ def create_app():
 
         return render_template("album_audio_stats.html", results=results)
 
-    
+    @app.route("/most-energetic-albums")
+    @role_required("admin")  # remove this line if you want everyone to access it
+    def most_energetic_albums():
+        conn = get_db_connection()
+        if conn is None:
+            flash("Database connection failed.", "error")
+            return redirect(url_for("index"))
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT
+            a.album_name,
+            AVG(af.energy) AS avg_energy
+            FROM Albums a
+            JOIN Tracks t ON a.album_id = t.album_id
+            JOIN AudioFeatures af ON t.track_id = af.track_id
+            GROUP BY a.album_id, a.album_name
+            HAVING AVG(af.energy) > 0.7
+            ORDER BY avg_energy DESC;
+        """)
+
+        results = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return render_template("most_energetic_albums.html", results=results)
+
     
     
     @app.route("/login", methods=["GET", "POST"])
